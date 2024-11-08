@@ -6,8 +6,8 @@ open Console.Types
 
 let private requestLabels () =
     async {
-        let! response = httpClient.GetFromJsonAsync<Label array>("labels") |> Async.AwaitTask
-        return response |> Array.map (_.name)
+        let! response = httpClient.GetFromJsonAsync<AddTaskPayload array>("tasks?filter=due%20today") |> Async.AwaitTask
+        return response
     } |> Async.RunSynchronously
 
 requestLabels ()

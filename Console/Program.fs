@@ -10,7 +10,7 @@ while true do
     let choice = chooseFrom choices "What do you want to do?"
 
     match choice with
-    | "AddTask" -> addTask
-    | "Manipulate" -> failwith "todo"
+    | "Add Task" -> addTask
+    | "Manipulate Today" -> failwith "todo"
     | _ -> failwith "Choice does not exist"
 
