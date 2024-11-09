@@ -1,6 +1,6 @@
 module Console.Types
 
-type AddTaskPayload = {
+type TodoistTask = {
     content: string
     description: string option
     project_id: string option
