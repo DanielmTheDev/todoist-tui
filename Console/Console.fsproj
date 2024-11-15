@@ -7,16 +7,18 @@
 
     <ItemGroup>
         <None Include="Experiments.fsx" />
+        <Compile Include="Time.fs" />
         <Compile Include="Communication.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Labels.fs" />
+        <Compile Include="Mapping.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="Tasks.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.2" />
+      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.4" />
     </ItemGroup>
 
     <ItemGroup>

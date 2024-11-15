@@ -16,6 +16,6 @@ let buildUriWithQuery (baseUrl: string) queryParams (client: HttpClient) =
     let uriBuilder = UriBuilder(fullUrl)
     let query = HttpUtility.ParseQueryString(uriBuilder.Query)
     for key, value in queryParams do
-        query.[key] <- value
+        query[key] <- value
     uriBuilder.Query <- query.ToString()
     uriBuilder.Uri.ToString()
