@@ -46,8 +46,11 @@ module Commands =
     
     let Root argv = 
         let noSubcommnadHandler () = 
-            C "Please specify a command!" |> toConsole
-
+            Many [
+                C "Please specify a command! The choices are:"
+                BI [P "addTodo"; P "updateTodo"; C "interactive"]
+            ] |> toConsole
+            
         rootCommand argv {
             description "Todoist root"
             setHandler noSubcommnadHandler
