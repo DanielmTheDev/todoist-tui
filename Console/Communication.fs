@@ -3,7 +3,10 @@ module Console.Communication
 open System
 open System.Net.Http
 open System.Net.Http.Headers
+open System.Net.Http.Json
 open System.Web
+open Console.Types
+open SpectreCoff
 
 let httpClient =
     let client = new HttpClient()
@@ -19,3 +22,29 @@ let buildUriWithQuery (baseUrl: string) queryParams (client: HttpClient) =
         query[key] <- value
     uriBuilder.Query <- query.ToString()
     uriBuilder.Uri.ToString()
+
+let updateTask (payload: UpdateTaskDto) =
+    async {
+        let! response = httpClient.PostAsJsonAsync($"tasks/{payload.id}", payload) |> Async.AwaitTask
+        if response.IsSuccessStatusCode then
+            C "✅" |> toConsole
+        else
+            P $"🏮: Statuscode: {response.StatusCode}" |> toConsole
+    } |> Async.RunSynchronously
+
+let createTask (payload: CreateTaskDto) =
+    async {
+        let! response = httpClient.PostAsJsonAsync("tasks", payload) |> Async.AwaitTask
+
+        if response.IsSuccessStatusCode then
+            C "✅" |> toConsole
+        else
+            P $"🏮: Statuscode: {response.StatusCode}" |> toConsole
+    } |> Async.RunSynchronously
+
+let getTodayTasks () =
+    async {
+        let uri = httpClient |> buildUriWithQuery "tasks" [("filter", "due today")]
+        return! httpClient.GetFromJsonAsync<TodoistTask List>(uri) |> Async.AwaitTask
+    }
+    |> Async.RunSynchronously

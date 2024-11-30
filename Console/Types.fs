@@ -48,6 +48,14 @@ type CreateTaskDto = {
     duration_unit: string option
 }
 
+type Label = {
+    id: string
+    name: string
+    color: string
+    order: int
+    is_favorite: bool
+}
+
 type UpdateTaskDto = {
     id: string
     content: string option
@@ -95,18 +103,10 @@ let emptyCreateTaskDto = {
     duration_unit = None
 }
 
-type Label = {
-    id: string
-    name: string
-    color: string
-    order: int
-    is_favorite: bool
-}
-
 let emptyLabel = {
     id = "1"
     name = ""
     color = ""
-    order = 1
+    order = 0
     is_favorite = false
 }

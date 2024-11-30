@@ -7,13 +7,14 @@
 
     <ItemGroup>
         <None Include="Experiments.fsx" />
+        <Compile Include="Types.fs" />
         <Compile Include="Time.fs" />
         <Compile Include="Communication.fs" />
-        <Compile Include="Types.fs" />
         <Compile Include="Labels.fs" />
         <Compile Include="Mapping.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="Tasks.fs" />
+        <Compile Include="ScheduleToday.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
