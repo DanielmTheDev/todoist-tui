@@ -1,6 +1,6 @@
 module Console.LocalState
 
-open Labels
+open Communication
 
 let mutable labels: string list = []
 
