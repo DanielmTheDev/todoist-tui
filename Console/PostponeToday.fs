@@ -3,12 +3,13 @@ module Console.PostponeToday
 open System
 open Console.Communication
 open Console.ConsoleQueries
+open Console.TaskDateUpdating
 open Console.Types
 
-let except (chosenTasks: UpdateTaskDto list) : TodoistTask list -> TodoistTask list =
+let private except (chosenTasks: UpdateTaskDto list) : TodoistTask list -> TodoistTask list =
     List.filter (fun futureTask -> not (chosenTasks |> List.exists (fun chosenTask -> chosenTask.id = futureTask.id)))
 
-let rec distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateOnly * int) list) =
+let rec private distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateOnly * int) list) =
     match tasks with
     | [] -> []
     | task :: remainingTasks ->
@@ -16,7 +17,7 @@ let rec distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateOnly * int) 
         let updatedLoadList =
             (date, taskCount + 1) :: List.tail loadList
             |> List.sortBy snd
-        let updatedTask = { task with due_date = Some (date.ToString("yyyy-MM-dd")); due_string = None }
+        let updatedTask = task |> updateDueDatePreservingRecurring date
         updatedTask :: distributeTasks remainingTasks updatedLoadList
 
 let postponeToday () =

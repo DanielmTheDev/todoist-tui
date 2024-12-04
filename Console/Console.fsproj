@@ -12,6 +12,7 @@
         <Compile Include="Communication.fs" />
         <Compile Include="Mapping.fs" />
         <Compile Include="LocalState.fs" />
+        <Compile Include="TaskDateUpdating.fs" />
         <Compile Include="ConsoleQueries.fs" />
         <Compile Include="ScheduleToday.fs" />
         <Compile Include="PostponeToday.fs" />
