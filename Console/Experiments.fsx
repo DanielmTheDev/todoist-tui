@@ -1,4 +1,4 @@
-#r "bin/Debug/net8.0/Console.dll"
+#r "bin/Debug/net9.0/Console.dll"
 #r "nuget: EluciusFTW.SpectreCoff, 0.49.3"
 
 open System
@@ -33,11 +33,12 @@ let updateDueDatePreservingRecurring (date: DateOnly) task  =
 [1; 2;]
 |> List.iter (fun _ -> createTask { emptyCreateTaskDto with content = $"with date"; due_date = Some (DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")) })
 
-[1; 2; 3; 4; 5]
+[1; 2;]
 |> List.iter (fun i -> createTask { emptyCreateTaskDto with content = $"Recurring {i}"; due_string = Some "every day starting today" })
 
 [1; 2;]
-|> List.iter (fun _ -> createTask { emptyCreateTaskDto with content = $"ONe time"; due_string = Some "today" })
+|> List.iter (fun _ -> createTask { emptyCreateTaskDto with content = $"ONe time"; due_string = Some "today"; priority = Some 4 })
+
 let todoistTask =
     getTodayTasks ()
     |> List.filter _.content.Contains("Hello")

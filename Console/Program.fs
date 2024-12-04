@@ -1,10 +1,11 @@
 ﻿open Console
 open Console.PostponeToday
+open Console.ResetPriorities
 open Console.ScheduleToday
 open SpectreCoff
 open ConsoleQueries
 
-let choices = ["Add Task"; "Schedule Today"; "Postpone Today"]
+let choices = ["Add Task"; "Schedule Today"; "Postpone Today"; "Reset Today's priority"]
 
 LocalState.init ()
 
@@ -15,5 +16,6 @@ while true do
     | "Add Task" -> addTask ()
     | "Schedule Today" -> scheduleToday ()
     | "Postpone Today" -> postponeToday ()
+    | "Reset Today's priority" -> resetTodayPriority ()
     | _ -> failwith "Choice does not exist"
 
