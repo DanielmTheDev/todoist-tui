@@ -1,7 +1,5 @@
 module Console.Communication
 
-open System.Text.Json
-open System.Text.Json.Serialization
 open Console.Types
 open FsHttp
 
@@ -11,11 +9,6 @@ let init () =
     |> Config.transformHeader (fun header ->
         { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
     |> GlobalConfig.set
-
-    GlobalConfig.Json.defaultJsonSerializerOptions <-
-        let options = JsonSerializerOptions()
-        options.Converters.Add(JsonFSharpConverter())
-        options
 
 let requestLabels () =
     http {
@@ -49,7 +42,7 @@ let getTodayTasks () =
         query [ "filter", "due today" ]
     }
     |> Request.send
-    |> fun response -> response.DeserializeJson<TodoistTask list> ()
+    |> Response.deserializeJson<TodoistTask list>
 
 let getAheadTasks (daysAhead: int) =
     http {
@@ -57,4 +50,4 @@ let getAheadTasks (daysAhead: int) =
         query [ "filter", $"{daysAhead} days" ]
     }
     |> Request.send
-    |> fun response -> response.DeserializeJson<TodoistTask list> ()
+    |> Response.deserializeJson<TodoistTask list>

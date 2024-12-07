@@ -22,7 +22,6 @@
 
     <ItemGroup>
       <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.4" />
-      <PackageReference Include="FSharp.SystemTextJson" Version="1.3.13" />
       <PackageReference Include="FsHttp" Version="15.0.1" />
     </ItemGroup>
 
