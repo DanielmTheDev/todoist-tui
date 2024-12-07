@@ -1,62 +1,60 @@
 module Console.Communication
 
-open System
-open System.Net.Http
-open System.Net.Http.Headers
-open System.Net.Http.Json
-open System.Web
+open System.Text.Json
+open System.Text.Json.Serialization
 open Console.Types
-open SpectreCoff
+open FsHttp
 
-let private httpClient =
-    let client = new HttpClient()
-    client.BaseAddress <- Uri("https://api.todoist.com/rest/v2/")
-    client.DefaultRequestHeaders.Authorization <- AuthenticationHeaderValue("Bearer", "your-api-key")
-    client
+let init () =
+    GlobalConfig.defaults
+    |> Config.useBaseUrl "https://api.todoist.com/rest/v2/"
+    |> Config.transformHeader (fun header ->
+        { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
+    |> GlobalConfig.set
 
-let private buildUriWithQuery (baseUrl: string) queryParams (client: HttpClient) =
-    let fullUrl = Uri(client.BaseAddress, baseUrl)
-    let uriBuilder = UriBuilder(fullUrl)
-    let query = HttpUtility.ParseQueryString(uriBuilder.Query)
-    for key, value in queryParams do
-        query[key] <- value
-    uriBuilder.Query <- query.ToString()
-    uriBuilder.Uri.ToString()
-
-let showResult (response: HttpResponseMessage) =
-    if response.IsSuccessStatusCode then
-        C "✅" |> toConsole
-    else
-        P $"🏮: Statuscode: {response.StatusCode}" |> toConsole
+    GlobalConfig.Json.defaultJsonSerializerOptions <-
+        let options = JsonSerializerOptions()
+        options.Converters.Add(JsonFSharpConverter())
+        options
 
 let requestLabels () =
-    async {
-        let! response = httpClient.GetFromJsonAsync<Label List>("labels") |> Async.AwaitTask
-        return response |> List.map _.name
-    } |> Async.RunSynchronously
+    http {
+        GET "labels"
+    }
+    |> Request.send
+    |> fun response -> response.DeserializeJson<Label list> ()
+    |> List.map _.name
 
 let updateTask (payload: UpdateTaskDto) =
-    async {
-        let! response = httpClient.PostAsJsonAsync($"tasks/{payload.id}", payload)|> Async.AwaitTask
-        response |> showResult
-    } |> Async.RunSynchronously
+    http {
+        POST $"tasks/{payload.id}"
+        body
+        jsonSerialize payload
+    }
+    |> Request.send
+    |> ignore
 
 let createTask (payload: CreateTaskDto) =
-    async {
-        let! response = httpClient.PostAsJsonAsync("tasks", payload) |> Async.AwaitTask
-        response |> showResult
-    } |> Async.RunSynchronously
+    http {
+        POST "tasks"
+        body
+        jsonSerialize payload
+    }
+    |> Request.send
+    |> ignore
 
 let getTodayTasks () =
-    async {
-        let uri = httpClient |> buildUriWithQuery "tasks" [("filter", "due today")]
-        return! httpClient.GetFromJsonAsync<TodoistTask List>(uri) |> Async.AwaitTask
+    http {
+        GET "tasks"
+        query [ "filter", "due today" ]
     }
-    |> Async.RunSynchronously
+    |> Request.send
+    |> fun response -> response.DeserializeJson<TodoistTask list> ()
 
-let getAheadTasks (daysAhead: int )=
-    async {
-        let uri = httpClient |> buildUriWithQuery "tasks" [("filter", $"{daysAhead} days")]
-        return! httpClient.GetFromJsonAsync<TodoistTask List>(uri) |> Async.AwaitTask
+let getAheadTasks (daysAhead: int) =
+    http {
+        GET "tasks"
+        query [ "filter", $"{daysAhead} days" ]
     }
-    |> Async.RunSynchronously
+    |> Request.send
+    |> fun response -> response.DeserializeJson<TodoistTask list> ()
