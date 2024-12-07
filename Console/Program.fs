@@ -18,4 +18,7 @@ while true do
     | "Postpone Today" -> postponeToday ()
     | "Reset Today's priority" -> resetTodayPriority ()
     | _ -> failwith "Choice does not exist"
+    |> Async.Parallel
+    |> Async.RunSynchronously
+    |> ignore
 

@@ -21,4 +21,4 @@ let scheduleToday () =
     (chooseTodayTasksGroupedByLabel ())
     |> List.map createTaskWithNewTime
     |> askForNewLabel
-    |> List.iter updateTask
+    |> List.map updateTask

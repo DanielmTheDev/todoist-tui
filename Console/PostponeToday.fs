@@ -28,4 +28,4 @@ let postponeToday () =
     |> List.map (fun (date, tasks) -> (date, tasks.Length))
     |> List.sortBy snd
     |> distributeTasks chosenTasks
-    |> List.iter updateTask
+    |> List.map updateTask

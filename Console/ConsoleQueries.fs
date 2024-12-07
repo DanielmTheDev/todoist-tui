@@ -24,6 +24,7 @@ let addTask () =
     let label = chooseFrom labels "🏷️"
     { emptyCreateTaskDto with content = content; due_string = Some due; labels = Some [|label|] }
     |> createTask
+    |> fun async -> [async]
 
 let chooseFutureTasks () =
     chooseFrom ["2"; "3"; "4"; "5"] "how many days?"

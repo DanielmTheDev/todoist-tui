@@ -24,8 +24,7 @@ let updateTask (payload: UpdateTaskDto) =
         body
         jsonSerialize payload
     }
-    |> Request.send
-    |> ignore
+    |> Request.sendAsync
 
 let createTask (payload: CreateTaskDto) =
     http {
@@ -33,8 +32,7 @@ let createTask (payload: CreateTaskDto) =
         body
         jsonSerialize payload
     }
-    |> Request.send
-    |> ignore
+    |> Request.sendAsync
 
 let getTodayTasks () =
     http {
