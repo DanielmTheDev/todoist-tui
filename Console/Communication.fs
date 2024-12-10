@@ -13,7 +13,7 @@ let defaultPayload =
       resource_types = [] }
 
 let restApiUrl = "https://api.todoist.com/rest/v2"
-let syncApiUrl = "https://api.todoist.com/sync/v9"
+let syncApiUrl = "https://api.todoist.com/sync/v9/sync"
 
 let init ()=
     GlobalConfig.defaults

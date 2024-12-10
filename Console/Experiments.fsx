@@ -11,23 +11,51 @@ open Console.Types
 open Console.Mapping
 open Console.Types
 open FsHttp
-open FsHttp.Dsl.Print
 
-// List.init 1 (fun i -> { emptyCreateTaskDto with content = $"Check something"; due_string = Some "today"; priority = Some 4 })
+// init()
+//
+// List.init 4 (fun i -> { emptyCreateTaskDto with content = $"Check something {i}"; due_string = Some "today"; priority = Some 4 })
 // |> List.map createTask
 // |> Async.Parallel
 // |> Async.StartAsTask
 
-let payload =
-    {|  sync_token = "*"
-        resource_types = ["labels"] |}
+type args =
+    { id: string
+      parent_id: string option
+      due: string option }
+
+let emptyArgs =
+    { id = ""
+      parent_id = None
+      due = None }
+
+type command =
+    { ``type``: string
+      uuid: string
+      args:  args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
+
+let todayTasks = getTodayTasks ()
+
+let first = List.head todayTasks
+let others = List.tail todayTasks
+
+let commands =
+    others
+    |> List.collect (fun task -> [{ ``type`` = "item_move"; uuid = task.id; args = { emptyArgs with id = task.id; parent_id = Some first.id }}; { ``type`` = "item_update"; uuid = task.id; args = { emptyArgs with id = task.id; due = Some "no date" } }])
 
 http {
-    POST "sync"
+    POST "https://api.todoist.com/sync/v9/sync"
     body
-    jsonSerialize payload
+    jsonSerialize {| commands = commands |}
 }
 |> Request.send
-|> Response.deserializeJson<SyncResponse>
+
+let updateDtos =
+    others
+    |> List.map toUpdateDto
+    |> List.map (fun t -> { t with due_date = None; due_string = Some "no date"; due_datetime = None })
+    |> List.map updateTask
+    |> Async.Parallel
+    |> Async.RunSynchronously
 
 
