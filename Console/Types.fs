@@ -71,6 +71,12 @@ type UpdateTaskDto = {
     duration_unit: string option
 }
 
+type SyncResponse = {
+    full_sync: bool
+    sync_token: string
+    labels: Label list option
+}
+
 let emptyUpdateTaskDto =
     { content = None
       id = ""

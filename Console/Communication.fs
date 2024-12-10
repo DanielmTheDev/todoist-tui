@@ -3,24 +3,36 @@ module Console.Communication
 open Console.Types
 open FsHttp
 
-let init () =
+type Payload = {
+    sync_token: string
+    resource_types: string list
+}
+
+let defaultPayload =
+    { sync_token = "*"
+      resource_types = [] }
+
+let restApiUrl = "https://api.todoist.com/rest/v2"
+let syncApiUrl = "https://api.todoist.com/sync/v9"
+
+let init ()=
     GlobalConfig.defaults
-    |> Config.useBaseUrl "https://api.todoist.com/rest/v2/"
     |> Config.transformHeader (fun header ->
-        { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
+        { header with headers = header.headers.Add("Authorization", "Bearer c26345440c983ecc88f94f5171ed8404500b4207") })
     |> GlobalConfig.set
 
 let requestLabels () =
     http {
-        GET "labels"
+        GET $"{restApiUrl}/labels"
     }
     |> Request.send
     |> fun response -> response.DeserializeJson<Label list> ()
     |> List.map _.name
 
+
 let updateTask (payload: UpdateTaskDto) =
     http {
-        POST $"tasks/{payload.id}"
+        POST $"{restApiUrl}tasks/{payload.id}"
         body
         jsonSerialize payload
     }
@@ -28,7 +40,7 @@ let updateTask (payload: UpdateTaskDto) =
 
 let createTask (payload: CreateTaskDto) =
     http {
-        POST "tasks"
+        POST $"{restApiUrl}tasks"
         body
         jsonSerialize payload
     }
@@ -36,7 +48,7 @@ let createTask (payload: CreateTaskDto) =
 
 let getTodayTasks () =
     http {
-        GET "tasks"
+        GET $"{restApiUrl}tasks"
         query [ "filter", "due today" ]
     }
     |> Request.send
@@ -44,7 +56,7 @@ let getTodayTasks () =
 
 let getAheadTasks (daysAhead: int) =
     http {
-        GET "tasks"
+        GET $"{restApiUrl}tasks"
         query [ "filter", $"{daysAhead} days" ]
     }
     |> Request.send
