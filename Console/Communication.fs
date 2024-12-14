@@ -1,26 +1,39 @@
 module Console.Communication
 
+open System
 open Console.Types
 open FsHttp
 
-let init () =
+type Payload = {
+    sync_token: string
+    resource_types: string list
+}
+
+let defaultPayload =
+    { sync_token = "*"
+      resource_types = [] }
+
+let restApiUrl = "https://api.todoist.com/rest/v2"
+let syncApiUrl = "https://api.todoist.com/sync/v9/sync"
+
+let init ()=
     GlobalConfig.defaults
-    |> Config.useBaseUrl "https://api.todoist.com/rest/v2/"
     |> Config.transformHeader (fun header ->
         { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
     |> GlobalConfig.set
 
 let requestLabels () =
     http {
-        GET "labels"
+        GET $"{restApiUrl}/labels"
     }
     |> Request.send
     |> fun response -> response.DeserializeJson<Label list> ()
     |> List.map _.name
 
+
 let updateTask (payload: UpdateTaskDto) =
     http {
-        POST $"tasks/{payload.id}"
+        POST $"{restApiUrl}/tasks/{payload.id}"
         body
         jsonSerialize payload
     }
@@ -28,7 +41,7 @@ let updateTask (payload: UpdateTaskDto) =
 
 let createTask (payload: CreateTaskDto) =
     http {
-        POST "tasks"
+        POST $"{restApiUrl}/tasks"
         body
         jsonSerialize payload
     }
@@ -36,7 +49,7 @@ let createTask (payload: CreateTaskDto) =
 
 let getTodayTasks () =
     http {
-        GET "tasks"
+        GET $"{restApiUrl}/tasks"
         query [ "filter", "due today" ]
     }
     |> Request.send
@@ -44,8 +57,24 @@ let getTodayTasks () =
 
 let getAheadTasks (daysAhead: int) =
     http {
-        GET "tasks"
+        GET $"{restApiUrl}/tasks"
         query [ "filter", $"{daysAhead} days" ]
     }
     |> Request.send
     |> Response.deserializeJson<TodoistTask list>
+
+let moveBelowParent parentId childIds =
+    let commands =
+        childIds
+        |> List.collect (fun childId ->
+            [
+              { ``type`` = "item_move"
+                uuid = (Guid.NewGuid ()).ToString()
+                args = { emptyArgs with id = childId; parent_id = Some parentId } }
+            ])
+    http {
+    POST "https://api.todoist.com/sync/v9/sync"
+    body
+    jsonSerialize {| commands = commands |}
+    }
+    |> Request.sendAsync

@@ -1,33 +1,72 @@
 #r "bin/Debug/net9.0/Console.dll"
 #r "nuget: EluciusFTW.SpectreCoff, 0.49.4"
 #r "nuget: FsHttp"
-
+#r "nuget: FSharp.Data"
 open System
+open System.IO
 open System.Text.RegularExpressions
 open Console.Communication
+open Console.ConsoleQueries
 open Console.Types
 open Console.Mapping
 open Console.Types
 open FsHttp
 
-let init () =
-    GlobalConfig.defaults
-    |> Config.useBaseUrl "https://api.todoist.com/rest/v2/"
-    |> Config.transformHeader (fun header ->
-        { header with headers = header.headers.Add("Authorization", "Bearer c26345440c983ecc88f94f5171ed8404500b4207") })
-    |> GlobalConfig.set
+init()
 
-let createTask (payload: CreateTaskDto) =
-    http {
-        POST "tasks"
-        body
-        jsonSerialize payload
-    }
-    |> Request.sendAsync
+let createTasks count =
+    List.init count (fun i -> { emptyCreateTaskDto with content = $"Check something {i}"; due_string = Some "today"; priority = Some 4 })
+    |> List.map createTask
+    |> Async.Parallel
+    |> Async.RunSynchronously
 
-init ()
+createTasks 4
 
-List.init 5 (fun i -> { emptyCreateTaskDto with content = $"Test Task {i}"; due_string = Some "today"; priority = Some 4 })
-|> List.map createTask
-|> Async.Parallel
-|> Async.RunSynchronously
+type args =
+    { id: string
+      parent_id: string option
+      due: string option }
+
+let emptyArgs =
+    { id = ""
+      parent_id = None
+      due = None }
+
+type command =
+    { ``type``: string
+      uuid: string
+      args:  args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
+
+let todayTasks = getTodayTasks ()
+
+let first = List.head todayTasks
+let others = List.tail todayTasks
+
+let commands =
+    others
+    |> List.collect (fun task ->
+        [
+          { ``type`` = "item_move"
+            uuid = task.id
+            args = { emptyArgs with id = task.id; parent_id = Some first.id } }
+          { ``type`` = "item_update"
+            uuid = task.id
+            args = { emptyArgs with id = task.id; due = Some "no date" } }
+        ])
+
+http {
+    POST "https://api.todoist.com/sync/v9/sync"
+    body
+    jsonSerialize {| commands = commands |}
+}
+|> Request.send
+
+let updateDtos =
+    others
+    |> List.map toUpdateDto
+    |> List.map (fun t -> { t with due_date = None; due_string = Some "no date"; due_datetime = None })
+    |> List.map updateTask
+    |> Async.Parallel
+    |> Async.RunSynchronously
+
+

@@ -71,6 +71,27 @@ type UpdateTaskDto = {
     duration_unit: string option
 }
 
+type SyncResponse = {
+    full_sync: bool
+    sync_token: string
+    labels: Label list option
+}
+
+type args =
+    { id: string
+      parent_id: string option
+      due: string option }
+
+let emptyArgs =
+    { id = ""
+      parent_id = None
+      due = None }
+
+type command =
+    { ``type``: string
+      uuid: string
+      args:  args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
+
 let emptyUpdateTaskDto =
     { content = None
       id = ""
