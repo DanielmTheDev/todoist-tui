@@ -16,6 +16,7 @@
         <Compile Include="ConsoleQueries.fs" />
         <Compile Include="ScheduleToday.fs" />
         <Compile Include="CollectUnderNewParent.fs" />
+        <Compile Include="CompleteTasks.fs" />
         <Compile Include="PostponeToday.fs" />
         <Compile Include="ResetPriorities.fs" />
         <Compile Include="Program.fs"/>

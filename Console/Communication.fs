@@ -47,6 +47,12 @@ let createTask (payload: CreateTaskDto) =
     }
     |> Request.sendAsync
 
+let completeTask (taskId: string) =
+    http {
+        POST $"{restApiUrl}/tasks/{taskId}/close"
+    }
+    |> Request.sendAsync
+
 let getTodayTasks () =
     http {
         GET $"{restApiUrl}/tasks"
