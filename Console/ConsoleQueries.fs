@@ -7,16 +7,24 @@ open Console.Types
 open SpectreCoff
 open LocalState
 
-type concatLabelsWithTheirTasks = string * UpdateTaskDto list
+type TasksGroupedByLabel = string * UpdateTaskDto list
 
-let private emptyChoiceGroupsWithContentAsDisplay=
-    { DisplayFunction = (fun updateTaskDto -> updateTaskDto.content |> Option.defaultValue ""); Groups = [] }: ChoiceGroups<UpdateTaskDto>
+defaultGroupedSelectionOptions <- { defaultGroupedSelectionOptions with Optional = true }
 
-let private appendLabelGroup accChoiceGroups (labelsAsString, tasks) =
-    { accChoiceGroups with Groups = accChoiceGroups.Groups |> List.append [{ Group = { emptyUpdateTaskDto with content = Some labelsAsString }; Choices = Array.ofList tasks }] }
+let private emptyChoiceGroupsWithContentAsDisplay =
+    { DisplayFunction =(fun updateTaskDto -> updateTaskDto.content |> Option.defaultValue "")
+      Groups = [] }: ChoiceGroups<UpdateTaskDto>
 
-let private createChoiceGroup: concatLabelsWithTheirTasks list -> ChoiceGroups<UpdateTaskDto> =
-    List.fold appendLabelGroup emptyChoiceGroupsWithContentAsDisplay
+let private appendGroup accChoiceGroups (tasksByLabel: TasksGroupedByLabel) =
+    { accChoiceGroups with
+        Groups =
+            accChoiceGroups.Groups
+            |> List.append
+                [{ Group = { emptyUpdateTaskDto with content = Some (fst tasksByLabel) }
+                   Choices = Array.ofList (snd tasksByLabel) }] }
+
+let private createChoiceGroup: TasksGroupedByLabel list -> ChoiceGroups<UpdateTaskDto> =
+    List.fold appendGroup emptyChoiceGroupsWithContentAsDisplay
 
 let addTask () =
     let content = ask "💬"

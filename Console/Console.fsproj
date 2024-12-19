@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.4" />
+      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.12" />
       <PackageReference Include="FsHttp" Version="15.0.1" />
     </ItemGroup>
 

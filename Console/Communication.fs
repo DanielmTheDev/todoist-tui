@@ -19,7 +19,7 @@ let syncApiUrl = "https://api.todoist.com/sync/v9/sync"
 let init ()=
     GlobalConfig.defaults
     |> Config.transformHeader (fun header ->
-        { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
+        { header with headers = header.headers.Add("Authorization", "Bearer c26345440c983ecc88f94f5171ed8404500b4207") })
     |> GlobalConfig.set
 
 let requestLabels () =

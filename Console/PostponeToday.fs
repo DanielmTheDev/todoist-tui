@@ -21,11 +21,13 @@ let rec private distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateOnly
         updatedTask :: distributeTasks remainingTasks updatedLoadList
 
 let postponeToday () =
-    let chosenTasks = chooseTodayTasksGroupedByLabel ()
-    chooseFutureTasks ()
-    |> except chosenTasks
-    |> List.groupBy _.due.Value.date
-    |> List.map (fun (date, tasks) -> (date, tasks.Length))
-    |> List.sortBy snd
-    |> distributeTasks chosenTasks
-    |> List.map updateTask
+    match chooseTodayTasksGroupedByLabel () with
+    | [] -> []
+    | chosenTasks ->
+        chooseFutureTasks ()
+        |> except chosenTasks
+        |> List.groupBy _.due.Value.date
+        |> List.map (fun (date, tasks) -> (date, tasks.Length))
+        |> List.sortBy snd
+        |> distributeTasks chosenTasks
+        |> List.map updateTask
