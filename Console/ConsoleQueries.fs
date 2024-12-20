@@ -4,6 +4,7 @@ open System
 open Communication
 open Console.Mapping
 open Console.Types
+open Spectre.Console
 open SpectreCoff
 open LocalState
 
@@ -11,8 +12,20 @@ type TasksGroupedByLabel = string * UpdateTaskDto list
 
 defaultGroupedSelectionOptions <- { defaultGroupedSelectionOptions with Optional = true }
 
+let private displayColoredByPriority =
+    fun updateTaskDto ->
+        let color =
+            match updateTaskDto.priority with
+            | Some 1 -> Color.White
+            | Some 2 -> Color.LightSteelBlue
+            | Some 3 -> Color.Orange1
+            | _ -> Color.Red
+        (updateTaskDto.content
+        |> Option.defaultValue "")
+        |> markupString (Some color) []
+
 let private emptyChoiceGroupsWithContentAsDisplay =
-    { DisplayFunction =(fun updateTaskDto -> updateTaskDto.content |> Option.defaultValue "")
+    { DisplayFunction = displayColoredByPriority
       Groups = [] }: ChoiceGroups<UpdateTaskDto>
 
 let private appendGroup accChoiceGroups (tasksByLabel: TasksGroupedByLabel) =
@@ -21,7 +34,10 @@ let private appendGroup accChoiceGroups (tasksByLabel: TasksGroupedByLabel) =
             accChoiceGroups.Groups
             |> List.append
                 [{ Group = { emptyUpdateTaskDto with content = Some (fst tasksByLabel) }
-                   Choices = Array.ofList (snd tasksByLabel) }] }
+                   Choices =
+                       (snd tasksByLabel)
+                       |> List.sortByDescending (fun task -> task.priority |> Option.defaultValue Int32.MaxValue)
+                       |> Array.ofList }] }
 
 let private createChoiceGroup: TasksGroupedByLabel list -> ChoiceGroups<UpdateTaskDto> =
     List.fold appendGroup emptyChoiceGroupsWithContentAsDisplay
