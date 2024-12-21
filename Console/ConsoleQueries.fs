@@ -10,16 +10,16 @@ open LocalState
 
 type TasksGroupedByLabel = string * UpdateTaskDto list
 
-defaultGroupedSelectionOptions <- { defaultGroupedSelectionOptions with Optional = true }
+defaultGroupedSelectionOptions <- { defaultGroupedSelectionOptions with Optional = true; PageSize = 30 }
 
 let private displayColoredByPriority =
     fun updateTaskDto ->
         let color =
             match updateTaskDto.priority with
-            | Some 1 -> Color.White
-            | Some 2 -> Color.LightSteelBlue
+            | Some 4 -> Color.Red
             | Some 3 -> Color.Orange1
-            | _ -> Color.Red
+            | Some 2 -> Color.LightSteelBlue
+            | _ -> Color.White
         (updateTaskDto.content
         |> Option.defaultValue "")
         |> markupString (Some color) []
@@ -51,7 +51,7 @@ let addTask () =
     |> fun async -> [async]
 
 let chooseFutureTasks () =
-    chooseFrom ["2"; "3"; "4"; "5"] "how many days?"
+    chooseFrom (List.init 10 (fun i -> $"{i}")) "how many days?"
     |> int
     |> getAheadTasks
     |> List.filter (fun task -> task.due.Value.date > DateOnly.FromDateTime(DateTime.Now))
