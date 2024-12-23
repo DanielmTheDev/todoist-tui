@@ -5,11 +5,11 @@
 open System
 open System.IO
 open System.Text.RegularExpressions
-open Console.Communication
+open TodoistAdapter.Communication
 open Console.ConsoleQueries
-open Console.Types
+open TodoistAdapter.Types
 open Console.Mapping
-open Console.Types
+open TodoistAdapter.Types
 open FsHttp
 open Spectre.Console
 open SpectreCoff

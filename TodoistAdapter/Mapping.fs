@@ -1,8 +1,8 @@
-module Console.Mapping
+module TodoistAdapter.Mapping
 
-open Console.Types
+open TodoistAdapter.Types
 
-let toUpdateDto (task: TodoistTask): UpdateTaskDto =
+let toUpdateDto (task: TodoistTask) =
     { content = Some task.content
       id = task.id
       description = task.description

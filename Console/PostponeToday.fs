@@ -1,10 +1,10 @@
 module Console.PostponeToday
 
 open System
-open Console.Communication
+open TodoistAdapter.Communication
 open Console.ConsoleQueries
-open Console.TaskDateUpdating
-open Console.Types
+open TodoistAdapter.TaskDateUpdating
+open TodoistAdapter.Types
 
 let private except (chosenTasks: UpdateTaskDto list) : TodoistTask list -> TodoistTask list =
     List.filter (fun futureTask -> not (chosenTasks |> List.exists (fun chosenTask -> chosenTask.id = futureTask.id)))

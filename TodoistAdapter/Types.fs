@@ -1,4 +1,4 @@
-module Console.Types
+module TodoistAdapter.Types
 
 open System
 

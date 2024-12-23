@@ -2,8 +2,8 @@ module Console.CollectUnderNewParent
 
 open System.Net
 open Console.ConsoleQueries
-open Console.Communication
-open Console.Types
+open TodoistAdapter.Communication
+open TodoistAdapter.Types
 open FsHttp
 open SpectreCoff
 

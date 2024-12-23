@@ -1,7 +1,7 @@
 module Console.ResetPriorities
 
-open Console.Communication
-open Console.Mapping
+open TodoistAdapter.Communication
+open TodoistAdapter.Mapping
 
 let resetTodayPriority () =
     getTodayTasks ()

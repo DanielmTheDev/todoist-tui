@@ -1,8 +1,8 @@
-module Console.TaskDateUpdating
+module TodoistAdapter.TaskDateUpdating
 
 open System
 open System.Text.RegularExpressions
-open Console.Types
+open TodoistAdapter.Types
 
 let private appendStartDate (recurringPatten: string) (date: DateOnly) =
     let asString = date.ToString("dd/MM")

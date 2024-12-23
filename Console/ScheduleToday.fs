@@ -1,10 +1,10 @@
 module Console.ScheduleToday
 
-open Console.Communication
+open TodoistAdapter.Communication
 open Console.LocalState
 open Console.ConsoleQueries
 open Console.Time
-open Console.Types
+open TodoistAdapter.Types
 open SpectreCoff
 
 let private createTaskWithNewTime task =

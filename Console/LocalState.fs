@@ -1,6 +1,6 @@
 module Console.LocalState
 
-open Communication
+open TodoistAdapter.Communication
 
 let mutable labels: string list = []
 

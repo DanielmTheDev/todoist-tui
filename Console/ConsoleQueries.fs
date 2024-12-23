@@ -1,9 +1,9 @@
 module Console.ConsoleQueries
 
 open System
-open Communication
-open Console.Mapping
-open Console.Types
+open TodoistAdapter.Communication
+open TodoistAdapter.Mapping
+open TodoistAdapter.Types
 open Spectre.Console
 open SpectreCoff
 open LocalState

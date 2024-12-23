@@ -1,6 +1,6 @@
 module Console.CompleteTasks
 
-open Console.Communication
+open TodoistAdapter.Communication
 open Console.ConsoleQueries
 
 let completeTasks () =
