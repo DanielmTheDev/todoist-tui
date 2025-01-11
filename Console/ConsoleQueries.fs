@@ -43,22 +43,28 @@ let private createChoiceGroup: TasksGroupedByLabel list -> ChoiceGroups<UpdateTa
     List.fold appendGroup emptyChoiceGroupsWithContentAsDisplay
 
 let addTask () =
-    let content = ask "💬"
-    let due = askSuggesting "tod" "⏲️"
-    let label = chooseFrom labels "🏷️"
-    { emptyCreateTaskDto with content = content; due_string = Some due; labels = Some [|label|] }
-    |> createTask
-    |> fun async -> [async]
+    async {
+        let content = ask "💬"
+        let due = askSuggesting "tod" "⏲️"
+        let label = chooseFrom labels "🏷️"
+        let! response
+            = { emptyCreateTaskDto with content = content; due_string = Some due; labels = Some [|label|] }
+            |> createTask
+        return [response]
+    }
 
 let chooseFutureTasks () =
     chooseFrom (List.init 10 (fun i -> $"{i}")) "how many days?"
     |> int
     |> getAheadTasks
-    |> List.filter (fun task -> task.due.Value.date > DateOnly.FromDateTime(DateTime.Now))
+    |> List.filter (fun task -> task.due.Value.date > DateTime.Now)
 
 let chooseTodayTasksGroupedByLabel () =
-    (getTodayTasks ())
-    |> List.map toUpdateDto
-    |> List.groupBy (fun task -> String.concat " " (Array.sort (Option.defaultValue [||] task.labels)))
-    |> createChoiceGroup
-    |> fun choices -> chooseGroupedFrom choices "which tasks"
+    async {
+        let! tasks = getTodayTasks ()
+        return tasks
+        |> List.map toUpdateDto
+        |> List.groupBy (fun task -> String.concat " " (Array.sort (Option.defaultValue [||] task.labels)))
+        |> createChoiceGroup
+        |> fun choices -> chooseGroupedFrom choices "which tasks"
+    }

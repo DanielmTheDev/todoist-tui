@@ -42,6 +42,5 @@ while true do
     | CollectUnderNewParent -> collectUnderNewParent ()
     | PostponeToday -> postponeToday ()
     | ResetTodayPriority -> resetTodayPriority ()
-    |> Async.Parallel
     |> Async.RunSynchronously
     |> ignore

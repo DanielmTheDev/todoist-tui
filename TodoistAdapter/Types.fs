@@ -2,13 +2,24 @@ module TodoistAdapter.Types
 
 open System
 
+type SyncCommand = {
+    ``type``: string
+    uuid: string
+    args: obj  // This is a simplification - we can make this more specific later if needed
+}
+
+type SyncCommandArgs = {
+    id: string
+    parent_id: string option
+}
+
 type Duration = {
     amount: int
     unit: string
 }
 
 type Due = {
-    date: DateOnly
+    date: DateTime
     is_recurring: bool
     string: string
     datetime: DateTime option
@@ -30,6 +41,30 @@ type TodoistTask = {
     id: string
 }
 
+type TodoistProject = {
+    id: string
+    name: string
+    color: string
+    parent_id: string option
+    order: int
+    comment_count: int
+    is_shared: bool
+    is_favorite: bool
+    is_inbox_project: bool
+    is_team_inbox: bool
+    view_style: string
+    url: string
+}
+
+type TodoistLabel = {
+    id: string
+    name: string
+    color: string
+    order: int
+    is_favorite: bool
+    is_deleted: bool
+}
+
 type CreateTaskDto = {
     content: string
     description: string option
@@ -48,14 +83,6 @@ type CreateTaskDto = {
     duration_unit: string option
 }
 
-type Label = {
-    id: string
-    name: string
-    color: string
-    order: int
-    is_favorite: bool
-}
-
 type UpdateTaskDto = {
     id: string
     content: string option
@@ -72,12 +99,14 @@ type UpdateTaskDto = {
 }
 
 type SyncResponse = {
-    full_sync: bool
     sync_token: string
-    labels: Label list option
+    full_sync: bool
+    items: TodoistTask list
+    projects: TodoistProject list
+    labels: TodoistLabel list
 }
 
-type args =
+type Args =
     { id: string
       parent_id: string option
       due: string option }
@@ -87,10 +116,19 @@ let emptyArgs =
       parent_id = None
       due = None }
 
-type command =
+type Command =
     { ``type``: string
       uuid: string
-      args:  args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
+      args:  Args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
+
+type Payload = {
+    sync_token: string
+    resource_types: string list
+}
+
+let defaultPayload =
+    { sync_token = "*"
+      resource_types = [] }
 
 let emptyUpdateTaskDto =
     { content = None
@@ -130,4 +168,6 @@ let emptyLabel = {
     color = ""
     order = 0
     is_favorite = false
+    is_deleted = false
 }
+

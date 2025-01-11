@@ -8,6 +8,8 @@
     <ItemGroup>
         <Compile Include="Themes.fs" />
         <Compile Include="Types.fs" />
+        <Compile Include="Mapping.fs" />
+        <Compile Include="TreeView.fs" />
         <Compile Include="Update.fs" />
         <Compile Include="View.fs" />
         <Compile Include="Program.fs"/>
@@ -20,6 +22,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TodoistAdapter\TodoistAdapter.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include=".tui\config.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

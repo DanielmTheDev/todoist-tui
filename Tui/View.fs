@@ -1,8 +1,10 @@
 module Tui.View
 
+open System
 open Terminal.Gui
 open Terminal.Gui.Elmish
 open Tui.Themes
+open Tui.TreeView
 open Tui.Types
 
 let view (model: Model) (dispatch: Msg -> unit) =
@@ -18,7 +20,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 ]
             ]
             View.window [
-                darkTheme
+                // darkTheme
                 prop.position.x.absolute 0
                 prop.position.y.absolute 0
                 prop.width.fill 0
@@ -61,10 +63,25 @@ let view (model: Model) (dispatch: Msg -> unit) =
                             ]
                             View.button [
                                 button.text "Add"
-                                prop.position.x.absolute 3
+                                prop.position.x.absolute 0
                                 prop.position.y.absolute 5
                                 prop.width.percent 20
                                 prop.accept (fun _ -> dispatch AddTask)
+                            ]
+                            View.label [
+                                prop.position.x.absolute 1
+                                prop.position.y.absolute 7
+                                label.text "Label"
+                            ]
+                            View.comboBox [
+                                prop.position.x.absolute 1
+                                prop.position.y.absolute 8
+                                prop.canFocus true
+                                prop.tabStop (Some TabBehavior.TabStop)
+                                prop.width.fill 0
+                                prop.height.absolute 10
+                                comboBox.source ("No Label" :: (model.Labels |> List.map _.name))
+                                comboBox.selectedItemChanged (fun args -> dispatch (SetAddTaskLabel (args.Value.ToString())))
                             ]
                         ]
                     ]
@@ -76,16 +93,23 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         prop.width.percent 30
                         prop.height.fill 2
 
-                        prop.title "_Dummy"
+                        prop.title "_Today's Tasks"
                         prop.children [
-                            View.listView [
+                            View.treeView<ITreeNode> [
                                 prop.canFocus true
                                 prop.position.x.absolute 0
                                 prop.position.y.absolute 0
                                 prop.width.fill 0
                                 prop.height.fill 0
-                                listView.openSelectedItem (fun args -> dispatch (SelectItem (string args.Item)))
-                                listView.source ["1"; "2"]
+                                treeView<ITreeNode>.multiSelect true
+                                treeView.treeBuilder (DelegateTreeBuilder<ITreeNode>(_.Children))
+                                prop.ref (fun view ->
+                                    let treeView = view :?> TreeView<ITreeNode>
+                                    treeView.ClearObjects ()
+                                    let nodes = createNodes model.Tasks
+                                    match nodes with
+                                    | [] -> ()
+                                    | _ -> nodes |> List.iter treeView.AddObject)
                             ]
                         ]
                     ]
@@ -106,6 +130,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                                 prop.position.y.absolute 1
                                 prop.width.absolute 30
                                 prop.height.fill 0
+                            ]
+                            View.label [
+                                prop.position.x.absolute 1
+                                prop.position.y.absolute 7
+                                label.text ("❤ Home".Normalize())
                             ]
                         ]
                     ]

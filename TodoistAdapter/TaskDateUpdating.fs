@@ -4,7 +4,7 @@ open System
 open System.Text.RegularExpressions
 open TodoistAdapter.Types
 
-let private appendStartDate (recurringPatten: string) (date: DateOnly) =
+let private appendStartDate (recurringPatten: string) (date: DateTime) =
     let asString = date.ToString("dd/MM")
     match recurringPatten with
     | "" -> asString
@@ -19,7 +19,7 @@ let private extractRecurringPattern dueString =
 
 let private addDatePreservingRecurring = extractRecurringPattern >> appendStartDate
 
-let updateDueDatePreservingRecurring (date: DateOnly) (task: UpdateTaskDto) : UpdateTaskDto =
+let updateDueDatePreservingRecurring (date: DateTime) (task: UpdateTaskDto) : UpdateTaskDto =
     match task.due_string with
     | Some currentDueString when not (String.IsNullOrWhiteSpace currentDueString) ->
         let dueString = addDatePreservingRecurring currentDueString date

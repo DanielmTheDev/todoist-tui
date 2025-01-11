@@ -4,22 +4,15 @@ open System
 open TodoistAdapter.Types
 open FsHttp
 
-type Payload = {
-    sync_token: string
-    resource_types: string list
-}
-
-let defaultPayload =
-    { sync_token = "*"
-      resource_types = [] }
-
 let restApiUrl = "https://api.todoist.com/rest/v2"
 let syncApiUrl = "https://api.todoist.com/sync/v9/sync"
+
+let mutable syncToken = "*"
 
 let init ()=
     GlobalConfig.defaults
     |> Config.transformHeader (fun header ->
-        { header with headers = header.headers.Add("Authorization", "your-api-key-here") })
+        { header with headers = header.headers.Add("Authorization", "Bearer c26345440c983ecc88f94f5171ed8404500b4207") })
     |> GlobalConfig.set
 
 let requestLabels () =
@@ -27,7 +20,7 @@ let requestLabels () =
         GET $"{restApiUrl}/labels"
     }
     |> Request.send
-    |> fun response -> response.DeserializeJson<Label list> ()
+    |> fun response -> response.DeserializeJson<TodoistLabel list> ()
     |> List.map _.name
 
 
@@ -58,8 +51,12 @@ let getTodayTasks () =
         GET $"{restApiUrl}/tasks"
         query [ "filter", "due today" ]
     }
-    |> Request.send
-    |> Response.deserializeJson<TodoistTask list>
+    |> Request.sendAsync
+    |> fun asyncResponse ->
+        async {
+            let! response = asyncResponse
+            return response.DeserializeJson<TodoistTask list> ()
+        }
 
 let getAheadTasks (daysAhead: int) =
     http {
@@ -79,8 +76,27 @@ let moveBelowParent parentId childIds =
                 args = { emptyArgs with id = childId; parent_id = Some parentId } }
             ])
     http {
-    POST "https://api.todoist.com/sync/v9/sync"
+    POST syncApiUrl
     body
     jsonSerialize {| commands = commands |}
     }
     |> Request.sendAsync
+
+let fullSync () =
+    async {
+        let payload =
+            { defaultPayload with
+                sync_token = syncToken
+                resource_types = ["all"] }
+
+        let! response =
+            http {
+                POST syncApiUrl
+                body
+                jsonSerialize payload
+            }
+            |> Request.sendAsync
+        let syncResponse = response.DeserializeJson<SyncResponse>()
+        syncToken <- syncResponse.sync_token
+        return syncResponse
+    }

@@ -18,7 +18,10 @@ let private askForNewLabel tasks =
     | label -> tasks |> List.map (fun task -> { task with labels = Some [|label|] }: UpdateTaskDto)
 
 let scheduleToday () =
-    (chooseTodayTasksGroupedByLabel ())
-    |> List.map createTaskWithNewTime
-    |> askForNewLabel
-    |> List.map updateTask
+    async {
+        let! chosenTasks = chooseTodayTasksGroupedByLabel ()
+        let tasksWithNewTime = chosenTasks |> List.map createTaskWithNewTime
+        let tasksWithLabel = askForNewLabel tasksWithNewTime
+        let! updateResults = tasksWithLabel |> List.map updateTask |> Async.Parallel
+        return updateResults |> List.ofArray
+    }
