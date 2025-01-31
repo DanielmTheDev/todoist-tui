@@ -2,7 +2,7 @@ module TodoistAdapter.TaskDateUpdating
 
 open System
 open System.Text.RegularExpressions
-open TodoistAdapter.Types
+open TodoistAdapter.RestTypes
 
 let private appendStartDate (recurringPatten: string) (date: DateTime) =
     let asString = date.ToString("dd/MM")
@@ -19,9 +19,9 @@ let private extractRecurringPattern dueString =
 
 let private addDatePreservingRecurring = extractRecurringPattern >> appendStartDate
 
-let updateDueDatePreservingRecurring (date: DateTime) (task: UpdateTaskDto) : UpdateTaskDto =
-    match task.due_string with
-    | Some currentDueString when not (String.IsNullOrWhiteSpace currentDueString) ->
-        let dueString = addDatePreservingRecurring currentDueString date
-        { task with due_date = None; due_string = Some dueString }
-    | _ -> { task with due_string = None; due_date = Some (date.ToString("yyyy-MM-dd")) }
+let updateDueDatePreservingRecurring (date: DateTime) (task: TodoistTask) : TodoistTask =
+    match task.due with
+    | Some due when not (String.IsNullOrWhiteSpace due.string) ->
+        let dueString = addDatePreservingRecurring due.string date
+        { task with due = Some { due with string = dueString } }
+    | _ -> { task with due = Some { task.due.Value with date = Some date } }

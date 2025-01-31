@@ -1,5 +1,6 @@
 ﻿open Console
 open Console.CollectUnderNewParent
+open Console.UserInteraction
 open Console.CompleteTasks
 open Console.PostponeToday
 open Console.ResetPriorities
@@ -15,7 +16,8 @@ type TaskChoice =
     | PostponeToday
     | ResetTodayPriority
 
-let choiceToString = function
+let choiceToString =
+    function
     | AddTask -> "Add Task"
     | CompleteTasks -> "Complete Tasks"
     | ScheduleToday -> "Schedule Today"
@@ -23,24 +25,31 @@ let choiceToString = function
     | PostponeToday -> "Postpone Today"
     | ResetTodayPriority -> "Reset Today's priority"
 
-let choices = [AddTask; CompleteTasks; ScheduleToday; CollectUnderNewParent; PostponeToday; ResetTodayPriority]
+let choices =
+    [ AddTask
+      CompleteTasks
+      ScheduleToday
+      CollectUnderNewParent
+      PostponeToday
+      ResetTodayPriority ]
 
 LocalState.init ()
 
-while true do
+let rec mainLoop (ui: UserInteraction) =
     let choiceStrings = List.map choiceToString choices
     let chosen = chooseFrom choiceStrings "What do you want to do?"
 
-    let choice =
-        choices
-        |> List.find (fun c -> choiceToString c = chosen)
+    let choice = choices |> List.find (fun c -> choiceToString c = chosen)
 
     match choice with
-    | AddTask -> addTask ()
-    | CompleteTasks -> completeTasks ()
-    | ScheduleToday -> scheduleToday ()
-    | CollectUnderNewParent -> collectUnderNewParent ()
-    | PostponeToday -> postponeToday ()
+    | AddTask -> addTask ui
+    | CompleteTasks -> completeTasks ui
+    | ScheduleToday -> scheduleToday ui
+    | CollectUnderNewParent -> collectUnderNewParent ui
+    | PostponeToday -> postponeToday ui
     | ResetTodayPriority -> resetTodayPriority ()
     |> Async.RunSynchronously
     |> ignore
+    mainLoop ui
+
+mainLoop spectreCoffUi

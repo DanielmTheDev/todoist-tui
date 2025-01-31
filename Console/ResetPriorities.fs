@@ -1,16 +1,14 @@
 module Console.ResetPriorities
 
-open TodoistAdapter.Communication
-open TodoistAdapter.Mapping
+open TodoistAdapter.CommunicationRestApi
+open TodoistAdapter.CommunicationSyncApi
 
 let resetTodayPriority () =
     async {
         let! tasks = getTodayTasks ()
         let! updateResults =
             tasks
-            |> List.map toUpdateDto
             |> List.map (fun t -> { t with priority = Some 1 })
-            |> List.map updateTask
-            |> Async.Parallel
-        return updateResults |> List.ofArray
+            |> updateTask
+        return [updateResults]
     }

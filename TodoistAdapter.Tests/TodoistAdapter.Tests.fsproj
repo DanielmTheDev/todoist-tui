@@ -5,8 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="MockInteractions.fs" />
-        <Compile Include="MockTasks.fs" />
         <Compile Include="Tests.fs" />
     </ItemGroup>
 
@@ -19,6 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Console\Console.fsproj" />
+        <ProjectReference Include="..\TodoistAdapter\TodoistAdapter.fsproj" />
     </ItemGroup>
 </Project>

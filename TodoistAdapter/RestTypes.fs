@@ -1,17 +1,6 @@
-module TodoistAdapter.Types
+module TodoistAdapter.RestTypes
 
 open System
-
-type SyncCommand = {
-    ``type``: string
-    uuid: string
-    args: obj  // This is a simplification - we can make this more specific later if needed
-}
-
-type SyncCommandArgs = {
-    id: string
-    parent_id: string option
-}
 
 type Duration = {
     amount: int
@@ -19,11 +8,11 @@ type Duration = {
 }
 
 type Due = {
-    date: DateTime
+    date: DateTime option
+    timezone: string option
     is_recurring: bool
     string: string
     datetime: DateTime option
-    timezone: string option
 }
 
 type TodoistTask = {
@@ -83,67 +72,6 @@ type CreateTaskDto = {
     duration_unit: string option
 }
 
-type UpdateTaskDto = {
-    id: string
-    content: string option
-    description: string option
-    labels: string array option
-    priority: int option
-    due_string: string option
-    due_date: string option
-    due_datetime: string option
-    due_lang: string option
-    assignee_id: string option
-    duration: int option
-    duration_unit: string option
-}
-
-type SyncResponse = {
-    sync_token: string
-    full_sync: bool
-    items: TodoistTask list
-    projects: TodoistProject list
-    labels: TodoistLabel list
-}
-
-type Args =
-    { id: string
-      parent_id: string option
-      due: string option }
-
-let emptyArgs =
-    { id = ""
-      parent_id = None
-      due = None }
-
-type Command =
-    { ``type``: string
-      uuid: string
-      args:  Args } // todo: this should be a DU for each type of command, but can't be serialized into json without extra work
-
-type Payload = {
-    sync_token: string
-    resource_types: string list
-}
-
-let defaultPayload =
-    { sync_token = "*"
-      resource_types = [] }
-
-let emptyUpdateTaskDto =
-    { content = None
-      id = ""
-      description = None
-      labels = None
-      priority = None
-      due_string = None
-      due_date = None
-      due_datetime = None
-      due_lang = None
-      assignee_id = None
-      duration = None
-      duration_unit = None }
-
 let emptyCreateTaskDto = {
     content = ""
     description = None
@@ -162,6 +90,20 @@ let emptyCreateTaskDto = {
     duration_unit = None
 }
 
+let emptyTodoistTask =
+    { content = ""
+      description = None
+      project_id = None
+      section_id = None
+      parent_id = None
+      order = None
+      labels = None
+      priority = None
+      assignee_id = None
+      duration = None
+      due = None
+      id = "" }
+
 let emptyLabel = {
     id = "1"
     name = ""
@@ -170,4 +112,3 @@ let emptyLabel = {
     is_favorite = false
     is_deleted = false
 }
-

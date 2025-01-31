@@ -1,15 +1,15 @@
 module Console.PostponeToday
 
 open System
-open TodoistAdapter.Communication
 open Console.ConsoleQueries
+open TodoistAdapter.CommunicationSyncApi
 open TodoistAdapter.TaskDateUpdating
-open TodoistAdapter.Types
+open TodoistAdapter.RestTypes
 
-let private except (chosenTasks: UpdateTaskDto list) : TodoistTask list -> TodoistTask list =
+let private except (chosenTasks: TodoistTask list) : TodoistTask list -> TodoistTask list =
     List.filter (fun futureTask -> not (chosenTasks |> List.exists (fun chosenTask -> chosenTask.id = futureTask.id)))
 
-let rec private distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateTime * int) list) =
+let rec private distributeTasks (tasks: TodoistTask list) (loadList: (DateTime * int) list) =
     match tasks with
     | [] -> []
     | task :: remainingTasks ->
@@ -20,20 +20,19 @@ let rec private distributeTasks (tasks: UpdateTaskDto list) (loadList: (DateTime
         let updatedTask = task |> updateDueDatePreservingRecurring date
         updatedTask :: distributeTasks remainingTasks updatedLoadList
 
-let postponeToday () =
+let postponeToday ui =
     async {
-        let! chosenTasks = chooseTodayTasksGroupedByLabel ()
+        let! chosenTasks = chooseTodayTasksGroupedByLabel ui
         match chosenTasks with
         | [] -> return []
         | chosenTasks ->
             let! updateResults =
-                chooseFutureTasks ()
+                chooseFutureTasks ui
                 |> except chosenTasks
                 |> List.groupBy _.due.Value.date
-                |> List.map (fun (date, tasks) -> (date, tasks.Length))
+                |> List.map (fun (date, tasks) -> (date.Value, tasks.Length))
                 |> List.sortBy snd
                 |> distributeTasks chosenTasks
-                |> List.map updateTask
-                |> Async.Parallel
-            return updateResults |> List.ofArray
+                |> updateTask
+            return [updateResults]
     }

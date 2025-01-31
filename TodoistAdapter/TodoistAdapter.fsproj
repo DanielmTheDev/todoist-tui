@@ -6,9 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Types.fs" />
-        <Compile Include="Mapping.fs" />
-        <Compile Include="Communication.fs" />
+        <Compile Include="RestTypes.fs" />
+        <Compile Include="SyncTypes.fs" />
+        <Compile Include="CommunicationRestApi.fs" />
+        <Compile Include="CommunicationSyncApi.fs" />
         <Compile Include="TaskDateUpdating.fs" />
     </ItemGroup>
 

@@ -2,9 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Console", "Console\Console.fsproj", "{3EE6B83D-B0D6-44CA-8F1D-695294F5E750}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tui", "Tui\Tui.fsproj", "{EC026E23-8ECB-4ECF-8A55-E697F9185F66}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TodoistAdapter", "TodoistAdapter\TodoistAdapter.fsproj", "{00E97706-5C3C-411E-A2AD-CC135ECB0415}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TodoistAdapter.Tests", "TodoistAdapter.Tests\TodoistAdapter.Tests.fsproj", "{531651C5-3CB7-4825-B5B9-D2325AF79BD9}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Console.Tests", "Console.Tests\Console.Tests.fsproj", "{FE412692-0EEC-4289-A8F1-11AC0A763DFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,13 +18,17 @@ Global
 		{3EE6B83D-B0D6-44CA-8F1D-695294F5E750}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EE6B83D-B0D6-44CA-8F1D-695294F5E750}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EE6B83D-B0D6-44CA-8F1D-695294F5E750}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC026E23-8ECB-4ECF-8A55-E697F9185F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC026E23-8ECB-4ECF-8A55-E697F9185F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC026E23-8ECB-4ECF-8A55-E697F9185F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC026E23-8ECB-4ECF-8A55-E697F9185F66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{00E97706-5C3C-411E-A2AD-CC135ECB0415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{00E97706-5C3C-411E-A2AD-CC135ECB0415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00E97706-5C3C-411E-A2AD-CC135ECB0415}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00E97706-5C3C-411E-A2AD-CC135ECB0415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{531651C5-3CB7-4825-B5B9-D2325AF79BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{531651C5-3CB7-4825-B5B9-D2325AF79BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{531651C5-3CB7-4825-B5B9-D2325AF79BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{531651C5-3CB7-4825-B5B9-D2325AF79BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE412692-0EEC-4289-A8F1-11AC0A763DFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE412692-0EEC-4289-A8F1-11AC0A763DFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE412692-0EEC-4289-A8F1-11AC0A763DFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE412692-0EEC-4289-A8F1-11AC0A763DFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

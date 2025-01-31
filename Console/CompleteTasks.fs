@@ -1,11 +1,11 @@
 module Console.CompleteTasks
 
-open TodoistAdapter.Communication
+open TodoistAdapter.CommunicationRestApi
 open Console.ConsoleQueries
 
-let completeTasks () =
+let completeTasks ui =
     async {
-        let! chosenTasks = chooseTodayTasksGroupedByLabel ()
+        let! chosenTasks = chooseTodayTasksGroupedByLabel ui
         let! responses =
              chosenTasks
              |> List.map (fun t -> completeTask t.id)
