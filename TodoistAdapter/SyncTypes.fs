@@ -1,6 +1,5 @@
 module TodoistAdapter.SyncTypes
 
-open System
 open System.Text.Json
 open System.Text.Json.Serialization
 open TodoistAdapter.RestTypes
@@ -32,6 +31,7 @@ type SyncResponse = {
 type ItemUpdateArgs =
     { id: string
       parent_id: string option
+      labels: string list option
       priority: int
       due: Due option }
 
@@ -85,6 +85,7 @@ let defaultPayload =
 let emptyUpdateArgs: ItemUpdateArgs =
     { id = ""
       parent_id = None
+      labels = None
       priority = 4
       due = None }
 

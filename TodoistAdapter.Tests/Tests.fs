@@ -21,10 +21,9 @@ type CommunicationSyncApiTests() =
     [<Fact>]
     member _.``Updating a tasks time creates a reminder`` () =
         init ()
-        let now = TimeOnly.FromDateTime(DateTime.Now)
-        let createdTask = createTask "today 11:00"
+        let createdTask = createTask "today"
 
-        updateTask [{ createdTask with due = Some { createdTask.due.Value with string = $"today {now.AddMinutes 2}" } }]
+        updateTask [{ createdTask with due = Some { createdTask.due.Value with date = Some (TodoistDateTime DateTime.Now)} }]
         |> Async.RunSynchronously
         |> Response.assert2xx
         |> ignore

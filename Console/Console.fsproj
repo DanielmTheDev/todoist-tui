@@ -8,7 +8,6 @@
     <ItemGroup>
         <None Include="Experiments.fsx" />
         <Compile Include="UserInteraction.fs" />
-        <Compile Include="Time.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="ConsoleQueries.fs" />
         <Compile Include="ScheduleToday.fs" />

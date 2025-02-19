@@ -10,7 +10,7 @@
         <Compile Include="SyncTypes.fs" />
         <Compile Include="CommunicationRestApi.fs" />
         <Compile Include="CommunicationSyncApi.fs" />
-        <Compile Include="TaskDateUpdating.fs" />
+        <Compile Include="DueDate.fs" />
     </ItemGroup>
 
     <ItemGroup>

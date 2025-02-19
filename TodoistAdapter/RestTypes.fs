@@ -1,14 +1,46 @@
 module TodoistAdapter.RestTypes
 
 open System
+open System.Text.Json
+open System.Text.Json.Serialization
 
 type Duration = {
     amount: int
     unit: string
 }
 
+type DueDate =
+    | TodoistDateTime of DateTime
+    | TodoistDateOnly of DateOnly
+
+type OptionDueDateConverter() =
+    inherit JsonConverter<DueDate option>()
+
+    override _.Read(reader, _, _) =
+        if reader.TokenType = JsonTokenType.Null then
+            None
+        else
+            let raw = reader.GetString()
+            if String.IsNullOrWhiteSpace(raw) then None
+            elif raw.Contains("T") then
+                Some (DueDate.TodoistDateTime(DateTime.Parse raw))
+            else
+                Some (DueDate.TodoistDateOnly(DateOnly.Parse raw))
+
+    override _.Write(writer, value, _) =
+        match value with
+        | None ->
+            // You could write null, or skip, depending on your desired JSON
+            writer.WriteNullValue()
+        | Some (DueDate.TodoistDateTime dt) ->
+            writer.WriteStringValue(dt.ToString("yyyy-MM-ddTHH:mm:ss"))
+        | Some (DueDate.TodoistDateOnly d) ->
+            writer.WriteStringValue(d.ToString("yyyy-MM-dd"))
+
+
 type Due = {
-    date: DateTime option
+    [<System.Text.Json.Serialization.JsonConverter(typeof<OptionDueDateConverter>)>]
+    date: DueDate option
     timezone: string option
     is_recurring: bool
     string: string
@@ -22,7 +54,7 @@ type TodoistTask = {
     section_id: string option
     parent_id: string option
     order: int option
-    labels: string array option
+    labels: string list option
     priority: int option
     assignee_id: string option
     duration: Duration option
@@ -111,4 +143,12 @@ let emptyLabel = {
     order = 0
     is_favorite = false
     is_deleted = false
+}
+
+let emptyDue = {
+    date = None
+    timezone = None
+    is_recurring = false
+    string = ""
+    datetime = None
 }

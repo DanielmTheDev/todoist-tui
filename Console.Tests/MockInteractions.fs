@@ -1,5 +1,7 @@
 namespace Console.Tests
 
+open SpectreCoff
+
 [<RequireQualifiedAccess>]
 module MockInteractions =
 
@@ -32,6 +34,10 @@ module MockInteractions =
             chooseFromResponses = builder.chooseFromResponses @ [ response ] }
 
     let addChooseGroupedFrom (response: TodoistTask list) (builder: MockBuilder) =
+        { builder with
+            chooseGroupedFromResponses = builder.chooseGroupedFromResponses @ [ response ] }
+
+    let addChooseGroupedFromWith (response: TodoistTask list) (builder: MockBuilder) =
         { builder with
             chooseGroupedFromResponses = builder.chooseGroupedFromResponses @ [ response ] }
 

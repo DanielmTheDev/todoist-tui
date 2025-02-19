@@ -23,7 +23,12 @@ let sync resourceTypes syncToken =
                 jsonSerialize payload
             }
             |> Request.sendAsync
-        let syncResponse = response.DeserializeJson<SyncResponse>()
+
+        let syncResponse =
+            response
+            |> Response.assert2xx
+            |> Response.deserializeJson<SyncResponse>
+
         incrementalSyncToken <- syncResponse.sync_token
         return syncResponse
     }
@@ -35,12 +40,11 @@ let syncAllResourcesIncremental () = sync ["all"] incrementalSyncToken
 
 let apiKey = $"""Bearer {Environment.GetEnvironmentVariable("TODOIST_API_TOKEN")}"""
 
-let init () = // todo: this should be done in a seperate module, possibly in do clause
+let init () = // todo: this should be done in a separate module, possibly in do clause
     GlobalConfig.defaults
     |> Config.transformHeader (fun header ->
             { header with headers = header.headers.Add("Authorization", apiKey) })
     |> GlobalConfig.set
-
     userId <-
         (fullSyncResources ["user"]
         |> Async.RunSynchronously).user.id
@@ -83,10 +87,11 @@ let itemUpdateCommand (task: TodoistTask) =
                 { emptyUpdateArgs with
                    id = task.id
                    priority = Option.defaultValue 4 task.priority
+                   labels = task.labels
                    due = task.due |> Option.map
                        (fun due ->
-                           { date = match due.string with | "" -> due.date | _ -> None
-                             is_recurring = false
+                           { date = due.date
+                             is_recurring = due.is_recurring
                              string = Option.defaultValue "" (task.due |> Option.map _.string)
                              datetime = None
                              timezone = None } ) } }

@@ -7,6 +7,7 @@ open TodoistAdapter.RestTypes
 open Spectre.Console
 open SpectreCoff
 open LocalState
+open TodoistAdapter.TaskDateUpdating
 
 type TasksGroupedByLabel = string * TodoistTask list
 
@@ -68,13 +69,13 @@ let chooseFutureTasks ui =
     ui.chooseFrom (List.init 10 (fun i -> $"{i}")) "how many days?"
     |> int
     |> getAheadTasks
-    |> List.filter (fun task -> task.due.Value.date.Value > DateTime.Now)
+    |> List.filter (fun task -> (dueDateOf task) |> Option.defaultValue DateOnly.MinValue  > todaysDate ())
 
 let chooseTodayTasksGroupedByLabel (ui: UserInteraction) =
     async {
         let! tasks = getTodayTasks ()
         return tasks
-        |> List.groupBy (fun task -> String.concat " " (Array.sort (Option.defaultValue [||] task.labels)))
+        |> List.groupBy (fun task -> String.concat " " (List.sort (Option.defaultValue [] task.labels)))
         |> createChoiceGroup
         |> fun choices -> ui.chooseGroupedFromWith defaultGroupedSelectionOptions choices "which tasks"
     }
