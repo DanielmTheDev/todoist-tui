@@ -2,10 +2,7 @@ namespace TodoistAdapter.Tests
 
 open System
 open Console.CollectUnderNewParent
-open Console.PostponeToday
-open Console.ScheduleToday
 open Console.Tests
-open Console.Tests.MockTasks
 open FsHttp
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.CommunicationSyncApi
@@ -19,14 +16,7 @@ type ConsoleTests() =
 
     [<Fact>]
     member _.``Adds a task``() =
-        let ui =
-            MockInteractions.create ()
-            |> MockInteractions.addAsk "Test Task"
-            |> MockInteractions.addAskSuggesting "tod"
-            |> MockInteractions.addChooseFrom "testLabel"
-            |> MockInteractions.build
-
-        let createdTask = createAndGetTask ui
+        let createdTask = Workflows.createFull "Test Task" "tod" "testLabel"
 
         createdTask.content |> should equal "Test Task"
         (dueDateOf createdTask).Value |> should equal (todaysDate ())
@@ -34,8 +24,8 @@ type ConsoleTests() =
 
     [<Fact>]
     member _.``Collect under new parent adds parent task and removes due from children``() =
-        let created1 = createTodayAndGet ()
-        let created2 = createTodayAndGet ()
+        let created1 = Workflows.createToday ()
+        let created2 = Workflows.createToday ()
         let parentContent = Guid.NewGuid().ToString()
 
         let collectUi =
@@ -56,27 +46,27 @@ type ConsoleTests() =
             item.due |> should equal None)
 
     [<Fact>]
-    member _.``Postpones tasks and retains recurring``() =
-        deleteAllExistingTasks ()
+    member _.``Postpones tasks with links and retains recurring``() =
+        Workflows.deleteAllExistingTasks ()
         |> Async.RunSynchronously
         |> Response.assert2xx
         |> ignore
-        let todayTasks = [createTodayAndGet (); createWithDueStringAndGet "every day"]
-        let tomorrowTask = createWithDueStringAndGet "tom"
-        let dayAfterTomorrowTask = createWithDueStringAndGet "in 2 days"
-        let ui =
-            MockInteractions.create ()
-            |> MockInteractions.addChooseGroupedFrom todayTasks
-            |> MockInteractions.addChooseFrom "2"
-            |> MockInteractions.build
+        let link = "[Test Link](https://www.google.com)"
+        let todayTask1 = Workflows.createToday ()
+        let todayTask2 = Workflows.createFull link "every day" ""
+        let todayTasks = [todayTask1; todayTask2]
+        let tomorrowTask = Workflows.createWithDueString "tom"
+        let dayAfterTomorrowTask = Workflows.createWithDueString "in 2 days"
 
-        postponeToday ui |> Async.RunSynchronously |> ignore
+        Workflows.postpone todayTasks "2" |> ignore
 
         let allItems = (fullSync () |> Async.RunSynchronously).items
         allItems
         |> List.filter (fun item -> (dateOnlyOf item.due.Value.date.Value) = (DateOnly.FromDateTime (DateTime.Today.AddDays 1)))
         |> List.map _.id
-        |> should equal [todayTasks.Head.id; todayTasks.Tail.Head.id; tomorrowTask.id]
+        |> should equal [todayTask1.id; todayTask2.id; tomorrowTask.id]
+
+        (allItems |> List.find (fun item -> item.id = todayTask2.id)).due.Value.is_recurring |> should equal true
         todayTasks.Tail.Head.due.Value.is_recurring |> should equal true
 
         allItems
@@ -85,27 +75,16 @@ type ConsoleTests() =
         |> should equal [dayAfterTomorrowTask.id]
 
     [<Fact>]
-    member _.``When scheduling a recurring task it stays recurring and adds label``() =
-        let recurringTask = createWithDueStringAndGet "every 5 days"
+    member _.``When scheduling a recurring task with link it stays recurring and adds label``() =
+        let link = "[Test Link](https://www.google.com)"
+        let recurringTask = Workflows.createFull link "every 5 days" ""
 
-        let ui =
-            MockInteractions.create ()
-            |> MockInteractions.addChooseGroupedFromWith [ recurringTask ]
-            |> MockInteractions.addChooseFrom "23:30"
-            |> MockInteractions.addChooseFrom "testLabel"
-            |> MockInteractions.build
+        Workflows.reschedule "23:30" "testLabel" [recurringTask] |> ignore
 
-        scheduleToday ui
-        |> Async.RunSynchronously
-        |> List.map (fun r -> r |> Response.assert2xx)
-        |> List.head
-        |> Response.toString None
-        |> ignore
-
-        // todo: maybe use verify here instead
         let postponedTask = getTask recurringTask.id |> Async.RunSynchronously
         postponedTask.due.Value.is_recurring |> should equal true
         let expectedDateTime = DateTime ((DateOnly.FromDateTime DateTime.Now), (TimeOnly (23, 30)))
         postponedTask.due.Value.datetime.Value |> should equal expectedDateTime
         postponedTask.due.Value.string |> should equal "every 5 days"
         postponedTask.labels.Value.Head |> should equal "testLabel"
+        postponedTask.content |> should equal link

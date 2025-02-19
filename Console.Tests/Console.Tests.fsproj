@@ -6,7 +6,7 @@
 
     <ItemGroup>
         <Compile Include="MockInteractions.fs" />
-        <Compile Include="MockTasks.fs" />
+        <Compile Include="Workflows.fs" />
         <Compile Include="Tests.fs" />
     </ItemGroup>
 

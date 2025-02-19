@@ -1,10 +1,7 @@
 namespace Console.Tests
 
-open SpectreCoff
-
 [<RequireQualifiedAccess>]
 module MockInteractions =
-
     open System.Collections.Generic
     open Console.UserInteraction
     open TodoistAdapter.RestTypes
