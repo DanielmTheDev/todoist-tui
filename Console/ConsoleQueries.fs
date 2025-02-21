@@ -59,8 +59,8 @@ let addTask (ui: UserInteraction) =
         let content = ui.ask "💬"
         let due = ui.askSuggesting "tod" "⏲️"
         let label = ui.chooseFrom labels "🏷️"
-        let! response
-            = { emptyCreateTaskDto with content = content; due_string = Some due; labels = Some [|label|] }
+        let! response =
+            { emptyCreateTaskDto with content = content; due_string = Some due; labels = Some [|label|] }
             |> createTask
         return [response]
     }
@@ -68,6 +68,7 @@ let addTask (ui: UserInteraction) =
 let chooseFutureTasks ui =
     ui.chooseFrom (List.init 10 (fun i -> $"{i}")) "how many days?"
     |> int
+    |> fun i -> i + 1
     |> getAheadTasks
     |> List.filter (fun task -> (dueDateOf task) |> Option.defaultValue DateOnly.MinValue  > todaysDate ())
 
