@@ -8,13 +8,16 @@
     <ItemGroup>
         <None Include="Experiments.fsx" />
         <Compile Include="UserInteraction.fs" />
+        <Compile Include="TaskQueries\Add.fs" />
+        <Compile Include="TaskQueries\Today.fs" />
+        <Compile Include="TaskQueries\Future.fs" />
+        <Compile Include="Workflows\CollectUnderNewParent.fs" />
+        <Compile Include="Workflows\CompleteTasks.fs" />
+        <Compile Include="Workflows\PostponeToday.fs" />
+        <Compile Include="Workflows\ResetPriorities.fs" />
+        <Compile Include="Workflows\ScheduleToday.fs" />
         <Compile Include="LocalState.fs" />
-        <Compile Include="ConsoleQueries.fs" />
-        <Compile Include="ScheduleToday.fs" />
-        <Compile Include="CollectUnderNewParent.fs" />
-        <Compile Include="CompleteTasks.fs" />
-        <Compile Include="PostponeToday.fs" />
-        <Compile Include="ResetPriorities.fs" />
+        <Compile Include="Choice.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

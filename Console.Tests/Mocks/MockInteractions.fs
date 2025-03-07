@@ -1,16 +1,17 @@
 namespace Console.Tests
 
+open TodoistAdapter.Types.TodoistTask
+
 [<RequireQualifiedAccess>]
 module MockInteractions =
     open System.Collections.Generic
     open Console.UserInteraction
-    open TodoistAdapter.RestTypes
 
     type MockBuilder =
         { askResponses: string list
           askSuggestingResponses: string list
           chooseFromResponses: string list
-          chooseGroupedFromResponses: TodoistTask list list }
+          chooseGroupedFromResponses: Task list list }
 
     let create () =
         { askResponses = []
@@ -30,11 +31,11 @@ module MockInteractions =
         { builder with
             chooseFromResponses = builder.chooseFromResponses @ [ response ] }
 
-    let addChooseGroupedFrom (response: TodoistTask list) (builder: MockBuilder) =
+    let addChooseGroupedFrom (response: Task list) (builder: MockBuilder) =
         { builder with
             chooseGroupedFromResponses = builder.chooseGroupedFromResponses @ [ response ] }
 
-    let addChooseGroupedFromWith (response: TodoistTask list) (builder: MockBuilder) =
+    let addChooseGroupedFromWith (response: Task list) (builder: MockBuilder) =
         { builder with
             chooseGroupedFromResponses = builder.chooseGroupedFromResponses @ [ response ] }
 

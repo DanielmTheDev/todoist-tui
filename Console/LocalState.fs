@@ -1,10 +1,11 @@
-module Console.LocalState
+[<RequireQualifiedAccess>]
+module Console.State
 
-open TodoistAdapter.CommunicationRestApi
-open TodoistAdapter.CommunicationSyncApi
+open TodoistAdapter
+open TodoistAdapter.Types.State
 
-let mutable labels: string list = []
+let mutable state = defaultState
 
-let init () = // todo: this and the other init can be done with a "do" statement at start of module
-    init ()
-    labels <- [""]@requestLabels ()
+let init () =
+    Http.configureClient ()
+    SyncApi.initUser ()

@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="MockInteractions.fs" />
-        <Compile Include="Workflows.fs" />
+        <Compile Include="Mocks\MockInteractions.fs" />
+        <Compile Include="Mocks\Workflows.fs" />
         <Compile Include="Tests.fs" />
     </ItemGroup>
 

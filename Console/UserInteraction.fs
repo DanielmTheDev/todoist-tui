@@ -1,14 +1,14 @@
 module Console.UserInteraction
 
 open SpectreCoff
-open TodoistAdapter.RestTypes
+open TodoistAdapter.Types.TodoistTask
 
 type UserInteraction =
     { ask: string -> string
       askSuggesting: string -> string -> string
       chooseFrom: string list -> string -> string
-      chooseGroupedFromWith: GroupedSelectionPromptOptions -> ChoiceGroups<TodoistTask> -> string -> TodoistTask list
-      chooseGroupedFrom: ChoiceGroups<TodoistTask> -> string -> TodoistTask list }
+      chooseGroupedFromWith: GroupedSelectionPromptOptions -> ChoiceGroups<Task> -> string -> Task list
+      chooseGroupedFrom: ChoiceGroups<Task> -> string -> Task list }
 
 let spectreCoffUi =
     { ask = ask

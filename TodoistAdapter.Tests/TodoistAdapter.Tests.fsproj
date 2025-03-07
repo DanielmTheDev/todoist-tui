@@ -5,7 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Tests.fs" />
+        <Compile Include="TestData\TestTasks.fs" />
+        <Compile Include="TestData\TestLabels.fs" />
+        <Compile Include="LocalStateTests.fs" />
+        <Compile Include="ApiTests.fs" />
     </ItemGroup>
 
     <ItemGroup>

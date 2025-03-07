@@ -1,7 +1,9 @@
 module TodoistAdapter.CommunicationRestApi
 
-open TodoistAdapter.RestTypes
 open FsHttp
+open TodoistAdapter.Dtos.CreateTaskDto
+open TodoistAdapter.Types.TodoistLabel
+open TodoistAdapter.Types.TodoistTask
 
 let restApiUrl = "https://api.todoist.com/rest/v2"
 
@@ -10,11 +12,11 @@ let requestLabels () =
         GET $"{restApiUrl}/labels"
     }
     |> Request.send
-    |> fun response -> response.DeserializeJson<TodoistLabel list> ()
+    |> fun response -> response.DeserializeJson<Label list> ()
     |> List.map _.name
 
 // todo: All methods here should return Async<RealType>, not response
-let createTask (payload: CreateTaskDto) =
+let createTask (payload: CreateTask) =
     http {
         POST $"{restApiUrl}/tasks"
         body
@@ -37,7 +39,7 @@ let getTodayTasks () =
     |> fun asyncResponse ->
         async {
             let! response = asyncResponse
-            return response.DeserializeJson<TodoistTask list> ()
+            return response.DeserializeJson<Task list> ()
         }
 
 let getTask id =
@@ -48,7 +50,7 @@ let getTask id =
     |> fun asyncResponse ->
         async {
             let! response = asyncResponse
-            return response.DeserializeJson<TodoistTask> ()
+            return response.DeserializeJson<Task> ()
         }
 
 let getTaskByContent id =
@@ -59,7 +61,7 @@ let getTaskByContent id =
     |> fun asyncResponse ->
         async {
             let! response = asyncResponse
-            return response.DeserializeJson<TodoistTask> ()
+            return response.DeserializeJson<Task> ()
         }
 
 let getAheadTasks (daysAhead: int) =
@@ -68,5 +70,5 @@ let getAheadTasks (daysAhead: int) =
         query [ "filter", $"{daysAhead} days" ]
     }
     |> Request.send
-    |> Response.deserializeJson<TodoistTask list>
+    |> Response.deserializeJson<Task list>
 

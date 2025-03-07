@@ -1,4 +1,5 @@
 ﻿open Console
+open Console.Choice
 open Console.CollectUnderNewParent
 open Console.UserInteraction
 open Console.CompleteTasks
@@ -7,33 +8,15 @@ open Console.ResetPriorities
 open Console.ScheduleToday
 open SpectreCoff
 open ConsoleQueries
+open TodoistAdapter.Initialization
+open TodoistAdapter.LocalState
 
-type TaskChoice =
-    | AddTask
-    | CompleteTasks
-    | ScheduleToday
-    | CollectUnderNewParent
-    | PostponeToday
-    | ResetTodayPriority
+// todo filter:
+// - test stub is present in Adapter tests
+// - select filter somehow
+// - if filter present, apply on relevant actions (might mean new rest call since only there they can be applied)
 
-let choiceToString =
-    function
-    | AddTask -> "Add Task"
-    | CompleteTasks -> "Complete Tasks"
-    | ScheduleToday -> "Schedule Today"
-    | CollectUnderNewParent -> "Collect under new parent task"
-    | PostponeToday -> "Postpone Today"
-    | ResetTodayPriority -> "Reset Today's priority"
-
-let choices =
-    [ AddTask
-      CompleteTasks
-      ScheduleToday
-      CollectUnderNewParent
-      PostponeToday
-      ResetTodayPriority ]
-
-LocalState.init ()
+initialize ()
 
 let rec mainLoop (ui: UserInteraction) =
     let choiceStrings = List.map choiceToString choices
@@ -41,15 +24,17 @@ let rec mainLoop (ui: UserInteraction) =
 
     let choice = choices |> List.find (fun c -> choiceToString c = chosen)
 
+    let execute action = ui |> action (refreshedState ())
     match choice with
-    | AddTask -> addTask ui
-    | CompleteTasks -> completeTasks ui
-    | ScheduleToday -> scheduleToday ui
-    | CollectUnderNewParent -> collectUnderNewParent ui
-    | PostponeToday -> postponeToday ui
-    | ResetTodayPriority -> resetTodayPriority ()
+    | AddTask -> execute addTask
+    | CompleteTasks -> execute completeTasks
+    | ScheduleToday -> execute scheduleToday
+    | CollectUnderNewParent -> execute collectUnderNewParent
+    | PostponeToday -> execute postponeToday
+    | ResetTodayPriority -> resetTodayPriority (refreshedState ())
     |> Async.RunSynchronously
     |> ignore
+    refreshedState () |> ignore
     mainLoop ui
 
 mainLoop spectreCoffUi

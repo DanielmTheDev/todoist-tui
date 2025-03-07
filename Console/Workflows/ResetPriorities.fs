@@ -1,11 +1,12 @@
 module Console.ResetPriorities
 
-open TodoistAdapter.CommunicationRestApi
-open TodoistAdapter.CommunicationSyncApi
+open TodoistAdapter.SyncApi
+open TodoistAdapter.Types.State
+open TodoistAdapter.Types.TodoistTask
 
-let resetTodayPriority () =
+let resetTodayPriority (state: State) =
     async {
-        let! tasks = getTodayTasks ()
+        let tasks = state |> todaysItems
         let! updateResults =
             tasks
             |> List.map (fun t -> { t with priority = Some 1 })

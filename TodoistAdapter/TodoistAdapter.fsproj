@@ -6,11 +6,32 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="RestTypes.fs" />
-        <Compile Include="SyncTypes.fs" />
-        <Compile Include="CommunicationRestApi.fs" />
-        <Compile Include="CommunicationSyncApi.fs" />
-        <Compile Include="DueDate.fs" />
+        <Compile Include="Http.fs" />
+        <Compile Include="Types\Duration.fs" />
+        <Compile Include="Types\DueDate.fs" />
+        <Compile Include="Types\Due.fs" />
+        <Compile Include="Types\Reminder.fs" />
+        <Compile Include="Types\Task.fs" />
+        <Compile Include="Types\Project.fs" />
+        <Compile Include="Types\Label.fs" />
+        <Compile Include="Types\Filter.fs" />
+        <Compile Include="Types\User.fs" />
+        <Compile Include="Types\State.fs" />
+        <Compile Include="Dtos\CreateTask.fs" />
+        <Compile Include="Sync\Args\DeleteItem.fs" />
+        <Compile Include="Sync\Args\UpdateItem.fs" />
+        <Compile Include="Sync\Args\AddReminder.fs" />
+        <Compile Include="Sync\Args\Args.fs" />
+        <Compile Include="Sync\Commands\Command.fs" />
+        <Compile Include="Sync\Commands\DeleteItem.fs" />
+        <Compile Include="Sync\Commands\MoveItem.fs" />
+        <Compile Include="Sync\Commands\AddReminder.fs" />
+        <Compile Include="Sync\Commands\UpdateItem.fs" />
+        <Compile Include="Sync\SyncPayload.fs" />
+        <Compile Include="RestApi.fs" />
+        <Compile Include="SyncApi.fs" />
+        <Compile Include="LocalState.fs" />
+        <Compile Include="Initialization.fs" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,14 +6,16 @@ open Console.PostponeToday
 open Console.ScheduleToday
 open FsHttp
 open TodoistAdapter.CommunicationRestApi
-open TodoistAdapter.CommunicationSyncApi
-open TodoistAdapter.RestTypes
+open TodoistAdapter.SyncApi
+open TodoistAdapter.Types.State
+open TodoistAdapter.Types.TodoistTask
 
 let private create ui =
-    let createdTask = (addTask ui
+    let createdTask = ( ui
+        |> addTask defaultState
         |> Async.RunSynchronously
         |> List.map (fun response -> response |> Response.assert2xx)
-        |> List.map Response.deserializeJson<TodoistTask>).Head
+        |> List.map Response.deserializeJson<Task>).Head
     getTask createdTask.id |> Async.RunSynchronously
 
 let createFull name dueString label =
@@ -29,26 +31,29 @@ let createWithDueString dueString =
 
 let createToday () = createWithDueString "tod"
 
-let deleteAllExistingTasks () =
-    async {
-        let! allItems = fullSync ()
-        return! allItems.items |> deleteTasks
-    }
-
-let reschedule time label tasks =
+let reschedule time label tasks state =
     MockInteractions.create ()
     |> MockInteractions.addChooseGroupedFromWith tasks
     |> MockInteractions.addChooseFrom time
     |> MockInteractions.addChooseFrom label
     |> MockInteractions.build
-    |> scheduleToday
+    |> scheduleToday state
     |> Async.RunSynchronously
     |> List.map (fun r -> r |> Response.assert2xx)
 
-let postpone tasks days =
+let postpone tasks days state =
     MockInteractions.create ()
     |> MockInteractions.addChooseGroupedFrom tasks
     |> MockInteractions.addChooseFrom days
     |> MockInteractions.build
-    |> postponeToday
+    |> postponeToday state
     |> Async.RunSynchronously
+
+let deleteAllExistingTasks () =
+    async {
+        let! allItems = fullSync ()
+        return! allItems.items |> deleteTasks
+    }
+    |> Async.RunSynchronously
+    |> Response.assert2xx
+    |> ignore

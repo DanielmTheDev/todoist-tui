@@ -1,25 +1,26 @@
 module Console.CollectUnderNewParent
 
 open System.Net
-open Console.ConsoleQueries
+open Console.Queries.chooseTodayTasksGroupedByLabel
 open Console.UserInteraction
 open TodoistAdapter.CommunicationRestApi
-open TodoistAdapter.CommunicationSyncApi
-open TodoistAdapter.RestTypes
+open TodoistAdapter.SyncApi
 open FsHttp
+open TodoistAdapter.Dtos.CreateTaskDto
+open TodoistAdapter.Types.TodoistTask
 
-let collectUnderNewParent ui  =
+let collectUnderNewParent state ui =
     async {
-        let! chosenTasks = chooseTodayTasksGroupedByLabel ui
+        let chosenTasks = ui |> chooseTodayTasksGroupedByLabel state
         match chosenTasks with
         | [] -> return []
         | chosenTasks ->
             let! createdParent =
                 ui.ask "Name of new parent task"
-                |> fun content -> { emptyCreateTaskDto with content = content; due_string = Some "today"  }
+                |> fun content -> { defaultCreateTask with content = content; due_string = Some "today"  }
                 |> createTask
                 |> Async.RunSynchronously
-                |> Response.deserializeJson<TodoistTask>
+                |> Response.deserializeJson<Task>
                 |> async.Return
 
             let! response = moveBelowParent createdParent.id (chosenTasks |> List.map _.id)
