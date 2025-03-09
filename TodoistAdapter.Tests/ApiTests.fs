@@ -26,13 +26,3 @@ type ApiTests() =
         reminders |> should not' (be Empty)
         reminders.Head.``type`` |> should equal "relative"
         reminders.Head.minute_offset |> should equal 0
-
-    // [<Fact>]
-    // member _.``Get filters`` () =
-    //     let sync =
-    //         sync ["filters"] "*"
-    //         |> Async.RunSynchronously
-    //     let reminders = sync.reminders |> List.filter (fun r -> r.item_id = createdTask.id)
-    //     reminders |> should not' (be Empty)
-    //     reminders.Head.``type`` |> should equal "relative"
-    //     reminders.Head.minute_offset |> should equal 0

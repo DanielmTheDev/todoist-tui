@@ -1,4 +1,4 @@
-module Console.Queries.chooseFutureTasks
+module Console.TaskQueries.Future
 
 open System
 open Console.UserInteraction

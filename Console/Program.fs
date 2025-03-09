@@ -1,20 +1,14 @@
-﻿open Console
-open Console.Choice
+﻿open Console.Choice
 open Console.CollectUnderNewParent
+open Console.TaskQueries.Add
 open Console.UserInteraction
 open Console.CompleteTasks
 open Console.PostponeToday
 open Console.ResetPriorities
 open Console.ScheduleToday
 open SpectreCoff
-open ConsoleQueries
 open TodoistAdapter.Initialization
 open TodoistAdapter.LocalState
-
-// todo filter:
-// - test stub is present in Adapter tests
-// - select filter somehow
-// - if filter present, apply on relevant actions (might mean new rest call since only there they can be applied)
 
 initialize ()
 

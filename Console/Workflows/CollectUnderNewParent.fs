@@ -1,7 +1,7 @@
 module Console.CollectUnderNewParent
 
 open System.Net
-open Console.Queries.chooseTodayTasksGroupedByLabel
+open Console.TaskQueries.Today
 open Console.UserInteraction
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.SyncApi

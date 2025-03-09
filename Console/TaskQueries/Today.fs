@@ -1,11 +1,12 @@
-module Console.Queries.chooseTodayTasksGroupedByLabel
+module Console.TaskQueries.Today
 
 open System
-open Console.ConsoleQueries
+open Console.TaskQueries.Add
 open Console.UserInteraction
 open Spectre.Console
 open SpectreCoff
 open TodoistAdapter.Types.Due
+open TodoistAdapter.Types.DueDate
 open TodoistAdapter.Types.State
 open TodoistAdapter.Types.TodoistTask
 
@@ -28,10 +29,18 @@ let private prependRecurringSymbol (task: Task) =
         | _ -> task.content
     { task with content = content }
 
+let private appendTime (task: Task) =
+    let content =
+        match task.due |> Option.bind _.date with
+        | Some (TodoistDateTime dateTime) -> $"{task.content} (⏲️ {dateTime.Hour}:{dateTime.Minute})"
+        | _ -> task.content
+    { task with content = content }
+
 let private styleContent (task: Task) =
     task
     |> colorByPriority
     |> prependRecurringSymbol
+    |> appendTime
     |> _.content
 
 let private appendGroup (accChoiceGroups: ChoiceGroups<Task>) (tasksByLabel: TasksGroupedByLabel) =

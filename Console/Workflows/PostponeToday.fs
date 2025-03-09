@@ -1,8 +1,8 @@
 module Console.PostponeToday
 
 open System
-open Console.Queries.chooseFutureTasks
-open Console.Queries.chooseTodayTasksGroupedByLabel
+open Console.TaskQueries.Future
+open Console.TaskQueries.Today
 open TodoistAdapter.SyncApi
 open TodoistAdapter.Types.Due
 open TodoistAdapter.Types.DueDate

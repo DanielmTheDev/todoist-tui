@@ -1,7 +1,7 @@
 module Console.ScheduleToday
 
 open System
-open Console.Queries.chooseTodayTasksGroupedByLabel
+open Console.TaskQueries.Today
 open Console.UserInteraction
 open TodoistAdapter.SyncApi
 open TodoistAdapter.Types.Due

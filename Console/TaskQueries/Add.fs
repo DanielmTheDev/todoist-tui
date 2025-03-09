@@ -1,4 +1,4 @@
-module Console.ConsoleQueries
+module Console.TaskQueries.Add
 
 open Console.UserInteraction
 open TodoistAdapter.CommunicationRestApi

@@ -1,6 +1,6 @@
 module Console.CompleteTasks
 
-open Console.Queries.chooseTodayTasksGroupedByLabel
+open Console.TaskQueries.Today
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.Types.State
 
