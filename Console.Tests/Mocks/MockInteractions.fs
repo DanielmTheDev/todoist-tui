@@ -79,4 +79,6 @@ module MockInteractions =
                 if chooseGroupedFromQueue.Count > 0 then
                     chooseGroupedFromQueue.Dequeue()
                 else
-                    failwith "No more 'chooseGroupedFrom' responses available." }
+                    failwith "No more 'chooseGroupedFrom' responses available."
+
+          print = fun _ -> () }

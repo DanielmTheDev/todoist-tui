@@ -1,6 +1,7 @@
 namespace TodoistConsole
 
 open System
+open Console.AddTaskWithLoadBalancing
 open Console.CollectUnderNewParent
 open Console.Tests
 open FsHttp
@@ -95,3 +96,27 @@ type Tests() =
         postponedTask.due.Value.string |> should equal "every 5 days"
         postponedTask.labels.Value.Head |> should equal "testLabel"
         postponedTask.content |> should equal link
+
+    [<Fact>]
+    member _.``Adds task to day with least load``() =
+        Workflows.deleteAllExistingTasks ()
+        Workflows.createWithDueString "tom" |> ignore
+        Workflows.createWithDueString "in 2 days" |> ignore
+        Workflows.createWithDueString "in 3 days" |> ignore
+        let content = (Guid.NewGuid ()).ToString()
+        let state = refreshedState ()
+
+        let ui =
+            MockInteractions.create ()
+            |> MockInteractions.addAsk content
+            |> MockInteractions.addChooseFrom "3"
+            |> MockInteractions.build
+
+        let result = addTaskWithLoadBalancing state ui |> Async.RunSynchronously
+        result |> List.iter (fun r -> r |> Response.assert2xx |> ignore)
+
+        let allItems = (fullSync () |> Async.RunSynchronously).items
+        let newTask = allItems |> List.find (fun item -> item.content = content)
+
+        let expectedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1))
+        (dateOnlyOf newTask.due.Value.date.Value) |> should equal expectedDate

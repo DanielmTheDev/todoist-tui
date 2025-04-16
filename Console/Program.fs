@@ -1,4 +1,5 @@
-﻿open Console.Choice
+﻿open Console.AddTaskWithLoadBalancing
+open Console.Choice
 open Console.CollectUnderNewParent
 open Console.TaskQueries.Add
 open Console.UserInteraction
@@ -21,6 +22,7 @@ let rec mainLoop (ui: UserInteraction) =
     let execute action = ui |> action (refreshedState ())
     match choice with
     | AddTask -> execute addTask
+    | AddTaskWithLoadBalancing -> execute addTaskWithLoadBalancing
     | CompleteTasks -> execute completeTasks
     | ScheduleToday -> execute scheduleToday
     | CollectUnderNewParent -> execute collectUnderNewParent

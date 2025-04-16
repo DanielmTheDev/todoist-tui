@@ -1,14 +1,11 @@
 module Console.PostponeToday
 
-open System
-open Console.TaskQueries.Future
 open Console.TaskQueries.Today
+open Console.LoadBalancing
 open TodoistAdapter.SyncApi
 open TodoistAdapter.Types.Due
 open TodoistAdapter.Types.DueDate
 open TodoistAdapter.Types.TodoistTask
-
-type TasksAtDate = { date: DateOnly; numberOfTasks: int }
 
 let private except (chosenTasks: Task list) : Task list -> Task list =
     List.filter (fun futureTask -> not (chosenTasks |> List.exists (fun chosenTask -> chosenTask.id = futureTask.id)))
@@ -36,15 +33,15 @@ let rec private distributeTasks (tasks: Task list) (loadList: TasksAtDate list) 
 let postponeToday state ui =
     async {
         let chosenTasks = ui |> chooseTodayTasksGroupedByLabel state
+        let daysAhead = ui |> daysAhead
+        let today = todaysDate ()
         match chosenTasks with
         | [] -> return []
         | chosenTasks ->
             let! updateResults =
-                chooseFutureTasks ui
+                tasksBetweenDates state today (today.AddDays(daysAhead))
                 |> except chosenTasks
-                |> List.groupBy _.due.Value.date
-                |> List.map (fun (date, tasks) -> { date = (dateOnlyOf date.Value); numberOfTasks = tasks.Length })
-                |> List.sortBy _.numberOfTasks
+                |> groupTaskNumberByDate
                 |> distributeTasks chosenTasks
                 |> updateTask
             return [ updateResults ]

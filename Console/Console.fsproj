@@ -8,14 +8,15 @@
     <ItemGroup>
         <None Include="Experiments.fsx" />
         <Compile Include="UserInteraction.fs" />
+        <Compile Include="LoadBalancing.fs" />
         <Compile Include="TaskQueries\Add.fs" />
         <Compile Include="TaskQueries\Today.fs" />
-        <Compile Include="TaskQueries\Future.fs" />
         <Compile Include="Workflows\CollectUnderNewParent.fs" />
         <Compile Include="Workflows\CompleteTasks.fs" />
-        <Compile Include="Workflows\PostponeToday.fs" />
         <Compile Include="Workflows\ResetPriorities.fs" />
         <Compile Include="Workflows\ScheduleToday.fs" />
+        <Compile Include="Workflows\AddTaskWithLoadBalancing.fs" />
+        <Compile Include="Workflows\PostponeToday.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="Choice.fs" />
         <Compile Include="Program.fs"/>

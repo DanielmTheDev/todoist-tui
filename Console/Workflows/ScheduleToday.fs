@@ -16,7 +16,7 @@ let private scheduleTimes =
 
 let private createTaskWithNewTime (ui: UserInteraction) (task: Task) =
     let updatedTime =
-        ui.chooseFrom scheduleTimes $"What time should '{task.content}' be scheduled"
+        ui.chooseFrom scheduleTimes $"What time should [blue]'{task.content}'[/] be scheduled"
         |> TimeOnly.Parse
 
     let due =
@@ -31,7 +31,7 @@ let private createTaskWithNewTime (ui: UserInteraction) (task: Task) =
     { task with due = Some { due with date = Some dueDate } }
 
 let private askForNewLabel ui tasks (state: State) =
-    let newLabel = ui.chooseFrom (state |> labelNames) "Add new label to manipulated tasks"
+    let newLabel = ui.chooseFrom ([""]@(state |> labelNames)) "Add new label to manipulated tasks"
     match newLabel with
     | "" -> tasks
     | label -> tasks |> List.map (fun task -> { task with labels = Some [label] }: Task)

@@ -4,6 +4,7 @@ module Console.Tests.Workflows
 open Console.PostponeToday
 open Console.ScheduleToday
 open Console.TaskQueries.Add
+open Console.AddTaskWithLoadBalancing
 open FsHttp
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.SyncApi

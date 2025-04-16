@@ -2,6 +2,7 @@ module Console.Choice
 
 type TaskChoice =
     | AddTask
+    | AddTaskWithLoadBalancing
     | CompleteTasks
     | ScheduleToday
     | CollectUnderNewParent
@@ -11,6 +12,7 @@ type TaskChoice =
 let choiceToString =
     function
     | AddTask -> "Add Task"
+    | AddTaskWithLoadBalancing -> "Add task with load balancing"
     | CompleteTasks -> "Complete Tasks"
     | ScheduleToday -> "Schedule Today"
     | CollectUnderNewParent -> "Collect under new parent task"
@@ -19,6 +21,7 @@ let choiceToString =
 
 let choices =
     [ AddTask
+      AddTaskWithLoadBalancing
       CompleteTasks
       ScheduleToday
       CollectUnderNewParent
