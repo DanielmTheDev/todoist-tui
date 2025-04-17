@@ -10,27 +10,36 @@ open Console.ScheduleToday
 open SpectreCoff
 open TodoistAdapter.Initialization
 open TodoistAdapter.LocalState
+open System.Threading
 
 initialize ()
 
 let rec mainLoop (ui: UserInteraction) =
-    let choiceStrings = List.map choiceToString choices
-    let chosen = chooseFrom choiceStrings "What do you want to do?"
+    let timer = new Timer((fun _ -> refreshedState () |> ignore), null, 30000, 30000)
 
-    let choice = choices |> List.find (fun c -> choiceToString c = chosen)
+    let rec loop () =
+        let choiceStrings = List.map choiceToString choices
+        let chosen = chooseFrom choiceStrings "What do you want to do?"
 
-    let execute action = ui |> action (refreshedState ())
-    match choice with
-    | AddTask -> execute addTask
-    | AddTaskWithLoadBalancing -> execute addTaskWithLoadBalancing
-    | CompleteTasks -> execute completeTasks
-    | ScheduleToday -> execute scheduleToday
-    | CollectUnderNewParent -> execute collectUnderNewParent
-    | PostponeToday -> execute postponeToday
-    | ResetTodayPriority -> resetTodayPriority (refreshedState ())
-    |> Async.RunSynchronously
-    |> ignore
-    refreshedState () |> ignore
-    mainLoop ui
+        let choice = choices |> List.find (fun c -> choiceToString c = chosen)
+
+        let execute action = ui |> action (refreshedState ())
+        match choice with
+        | AddTask -> execute addTask
+        | AddTaskWithLoadBalancing -> execute addTaskWithLoadBalancing
+        | CompleteTasks -> execute completeTasks
+        | ScheduleToday -> execute scheduleToday
+        | CollectUnderNewParent -> execute collectUnderNewParent
+        | PostponeToday -> execute postponeToday
+        | ResetTodayPriority -> resetTodayPriority (refreshedState ())
+        |> Async.RunSynchronously
+        |> ignore
+        refreshedState () |> ignore
+        loop ()
+
+    try
+        loop ()
+    finally
+        timer.Dispose()
 
 mainLoop spectreCoffUi
