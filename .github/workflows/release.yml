@@ -44,17 +44,26 @@ jobs:
         run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            publish/${{ matrix.rid }}/${{ matrix.binary_name }}
           tag_name: commit-${{ steps.commit.outputs.hash }}
-          name: Release from commit ${{ steps.commit.outputs.hash }}
+          release_name: Release from commit ${{ steps.commit.outputs.hash }}
           body: |
             Automated release from main branch
             Commit: ${{ github.sha }}
             Triggered by: ${{ github.event_name }}
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_unmatched_files: true 
+          
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: publish/${{ matrix.rid }}/${{ matrix.binary_name }}
+          asset_name: ${{ matrix.binary_name }}
+          asset_content_type: application/octet-stream 
