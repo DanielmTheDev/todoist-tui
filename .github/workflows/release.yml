@@ -33,7 +33,8 @@ jobs:
           
       - name: Publish
         run: |
-          dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -o publish/
+          dotnet publish Console/Console.fsproj -c Release -r ${{ matrix.rid }} --self-contained true -o publish/${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          mv publish/${{ matrix.rid }}/Console$([System.IO.Path]::GetExtension("${{ matrix.binary_name }}")) publish/${{ matrix.rid }}/${{ matrix.binary_name }}
           echo "Build output directory:"
           ls -R publish/
         
