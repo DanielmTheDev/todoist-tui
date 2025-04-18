@@ -1,0 +1,94 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+          
+      - name: Publish Linux x64
+        run: |
+          dotnet publish Console/Console.fsproj -c Release -r linux-x64 --self-contained true -o publish/linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          cd publish/linux-x64
+          cp ../../scripts/install.sh ./
+          chmod +x install.sh
+          tar czf ../todoist-tui-linux-x64.tar.gz todoist-tui install.sh
+          cd ../..
+
+      - name: Publish Linux ARM64
+        run: |
+          dotnet publish Console/Console.fsproj -c Release -r linux-arm64 --self-contained true -o publish/linux-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          cd publish/linux-arm64
+          cp ../../scripts/install.sh ./
+          chmod +x install.sh
+          tar czf ../todoist-tui-linux-arm64.tar.gz todoist-tui install.sh
+          cd ../..
+
+      - name: Publish Windows x64
+        run: |
+          dotnet publish Console/Console.fsproj -c Release -r win-x64 --self-contained true -o publish/windows-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          cd publish/windows-x64
+          cp ../../scripts/install.ps1 ./
+          zip ../todoist-tui-windows-x64.zip todoist-tui.exe install.ps1
+          cd ../..
+
+      - name: Publish macOS x64
+        run: |
+          dotnet publish Console/Console.fsproj -c Release -r osx-x64 --self-contained true -o publish/macos-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          cd publish/macos-x64
+          cp ../../scripts/install.sh ./
+          chmod +x install.sh
+          tar czf ../todoist-tui-macos-x64.tar.gz todoist-tui install.sh
+          cd ../..
+
+      - name: Publish macOS ARM64
+        run: |
+          dotnet publish Console/Console.fsproj -c Release -r osx-arm64 --self-contained true -o publish/macos-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          cd publish/macos-arm64
+          cp ../../scripts/install.sh ./
+          chmod +x install.sh
+          tar czf ../todoist-tui-macos-arm64.tar.gz todoist-tui install.sh
+          cd ../..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            publish/todoist-tui-linux-x64.tar.gz
+            publish/todoist-tui-linux-arm64.tar.gz
+            publish/todoist-tui-windows-x64.zip
+            publish/todoist-tui-macos-x64.tar.gz
+            publish/todoist-tui-macos-arm64.tar.gz
+          tag_name: latest
+          name: Latest Release
+          body: |
+            Latest release from main branch
+            
+            Downloads:
+            - Linux (x64): todoist-tui-linux-x64.tar.gz
+            - Linux (ARM64/aarch64): todoist-tui-linux-arm64.tar.gz
+            - Windows (x64): todoist-tui-windows-x64.zip
+            - macOS (Intel): todoist-tui-macos-x64.tar.gz
+            - macOS (Apple Silicon M1/M2/M3): todoist-tui-macos-arm64.tar.gz
+
+            Installation:
+            1. Download the appropriate package for your system
+            2. Extract the archive
+            3. Run the install script:
+               - Linux/macOS: `./install.sh`
+               - Windows: Right-click `install.ps1` and select "Run with PowerShell"
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          token: ${{ secrets.GITHUB_TOKEN }}
