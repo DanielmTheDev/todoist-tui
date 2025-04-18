@@ -34,11 +34,6 @@ jobs:
       - name: Publish
         run: |
           dotnet publish Console/Console.fsproj -c Release -r ${{ matrix.rid }} --self-contained true -o publish/${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            mv publish/${{ matrix.rid }}/Console.exe publish/${{ matrix.rid }}/${{ matrix.binary_name }}
-          else
-            mv publish/${{ matrix.rid }}/Console publish/${{ matrix.rid }}/${{ matrix.binary_name }}
-          fi
           echo "Build output directory:"
           ls -R publish/
         
