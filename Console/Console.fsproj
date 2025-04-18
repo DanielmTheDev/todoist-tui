@@ -19,10 +19,13 @@
         <Compile Include="Workflows\PostponeToday.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="Choice.fs" />
+        <Compile Include="CommandLine.fs" />
+        <Compile Include="Interactive.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Argu" Version="6.2.5" />
       <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.12" />
       <PackageReference Include="FsHttp" Version="15.0.1" />
     </ItemGroup>
