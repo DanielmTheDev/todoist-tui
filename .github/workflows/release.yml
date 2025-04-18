@@ -33,9 +33,11 @@ jobs:
           
       - name: Publish
         run: |
-          dotnet publish Console/Console.fsproj -c Release -r ${{ matrix.rid }} --self-contained true -o publish/${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          dotnet publish Console/Console.fsproj -c Release -r ${{ matrix.rid }} --self-contained true -o $GITHUB_WORKSPACE/publish/${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
           echo "Build output directory:"
-          ls -R publish/
+          ls -R $GITHUB_WORKSPACE/publish/
+          echo "Checking binary exists:"
+          ls -l $GITHUB_WORKSPACE/publish/${{ matrix.rid }}/${{ matrix.binary_name }}
         
       - name: Get Commit Hash
         id: commit
@@ -45,7 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            publish/${{ matrix.rid }}/${{ matrix.binary_name }}
+            $GITHUB_WORKSPACE/publish/${{ matrix.rid }}/${{ matrix.binary_name }}
           tag_name: commit-${{ steps.commit.outputs.hash }}
           name: Release from commit ${{ steps.commit.outputs.hash }}
           body: |
@@ -55,4 +57,4 @@ jobs:
           draft: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_unmatched_files: false 
+          fail_on_unmatched_files: true 
