@@ -7,6 +7,7 @@ open Console.LoadBalancing
 open FsHttp
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.Dtos.CreateTaskDto
+open TodoistAdapter.Types
 open TodoistAdapter.Types.Due
 open TodoistAdapter.Types.State
 
@@ -23,17 +24,18 @@ let addTaskWithLoadBalancing (state: State) (ui: UserInteraction) =
             | [] -> DateOnly.FromDateTime(DateTime.Today.AddDays(1))
             | loadList -> loadList.Head.date
 
-        let! response =
+        let! op =
             { defaultCreateTask with
                 content = content
-                due_string = Some $"{leastLoadedDay}"
+                due_string = Some (DueString.fromDateOnly leastLoadedDay)
                 priority = Some 4 }
             |> createTask
+            |> ui.spinner "Adding"
 
-        if response.statusCode >= HttpStatusCode.OK then
+        if op.statusCode >= HttpStatusCode.OK then
              ui.print $"Task created in [blue]{(leastLoadedDay.DayNumber - today.DayNumber)}[/] days"
         else
-            ui.print $"Failed to create task (status code: {response.statusCode})"
+            ui.print $"Failed to create task (status code: {op.statusCode})"
 
-        return [response]
+        return [op]
     }

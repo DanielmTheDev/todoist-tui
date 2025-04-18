@@ -10,6 +10,7 @@
         <Compile Include="Types\Duration.fs" />
         <Compile Include="Types\DueDate.fs" />
         <Compile Include="Types\Due.fs" />
+        <Compile Include="Types\DueString.fs" />
         <Compile Include="Types\Reminder.fs" />
         <Compile Include="Types\Task.fs" />
         <Compile Include="Types\Project.fs" />

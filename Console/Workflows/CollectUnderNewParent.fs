@@ -15,15 +15,20 @@ let collectUnderNewParent state ui =
         match chosenTasks with
         | [] -> return []
         | chosenTasks ->
-            let! createdParent =
-                ui.ask "Name of new parent task"
-                |> fun content -> { defaultCreateTask with content = content; due_string = Some "today"  }
+            let parentContent = ui.ask "Name of new parent task"
+            let! response =
+                { defaultCreateTask with content = parentContent; due_string = Some "today"  }
                 |> createTask
-                |> Async.RunSynchronously
-                |> Response.deserializeJson<Task>
-                |> async.Return
+                |> ui.spinner "Creating parent task"
 
-            let! response = moveBelowParent createdParent.id (chosenTasks |> List.map _.id)
+            let createdParent =
+                response
+                |> Response.assert2xx
+                |> Response.deserializeJson<Task>
+
+            let! response =
+                moveBelowParent createdParent.id (chosenTasks |> List.map _.id)
+                |> ui.spinner "Moving children"
 
             match response with
             | response when response.statusCode = HttpStatusCode.OK  ->
@@ -31,6 +36,7 @@ let collectUnderNewParent state ui =
                     chosenTasks
                     |> List.map (fun t -> { t with due = None })
                     |> updateTask
+                    |> ui.spinner "Removing due time"
                 return [updateResults]
             | _ ->
                 return failwith "Something went wrong"

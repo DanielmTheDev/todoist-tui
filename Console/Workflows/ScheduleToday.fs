@@ -30,7 +30,7 @@ let private createTaskWithNewTime (ui: UserInteraction) (task: Task) =
 
     { task with due = Some { due with date = Some dueDate } }
 
-let private askForNewLabel ui tasks (state: State) =
+let private askForNewLabel ui (state: State) tasks =
     let newLabel = ui.chooseFrom ([""]@(state |> labelNames)) "Add new label to manipulated tasks"
     match newLabel with
     | "" -> tasks
@@ -38,10 +38,12 @@ let private askForNewLabel ui tasks (state: State) =
 
 let scheduleToday state ui =
     async {
-        let tasksWithNewTime =
+        let! response =
             ui
             |> chooseTodayTasksGroupedByLabel state
             |> List.map (createTaskWithNewTime ui)
-        let! response = askForNewLabel ui tasksWithNewTime state |> updateTask
+            |> askForNewLabel ui state
+            |> updateTask
+            |> ui.spinner "Scheduling"
         return [response]
     }

@@ -23,4 +23,4 @@ let refreshedState () =
         let! incremental = syncAllResourcesIncremental ()
         state <- mergeState state incremental
         return state
-    } |> Async.RunSynchronously
+    }

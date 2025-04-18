@@ -17,7 +17,7 @@ open FsUnit.Xunit
 
 type Tests() =
 
-    do initialize ()
+    do initializeAll () |> Async.RunSynchronously
 
     [<Fact>]
     member _.``Adds a task``() =
@@ -40,7 +40,7 @@ type Tests() =
             |> MockInteractions.build
 
         collectUi
-        |> collectUnderNewParent (refreshedState ())
+        |> collectUnderNewParent (refreshedState () |> Async.RunSynchronously)
         |> Async.RunSynchronously |> ignore
 
         let allItems = (fullSync () |> Async.RunSynchronously).items
@@ -60,7 +60,7 @@ type Tests() =
         let todayTask2 = Workflows.createFull link "every day" ""
         let tomorrowTask = Workflows.createWithDueString "tom"
         let dayAfterTomorrowTask = Workflows.createWithDueString "in 2 days"
-        let state = refreshedState ()
+        let state = refreshedState () |> Async.RunSynchronously
         let todayTasks = state |> itemsWithIds [todayTask1.id; todayTask2.id]
 
         Workflows.postpone todayTasks "2" state
@@ -84,10 +84,10 @@ type Tests() =
     member _.``When scheduling a recurring task with link it stays recurring and adds label``() =
         let link = "[Test Link](https://www.google.com)"
         let task = Workflows.createFull link "every 5 days" ""
-        let state = refreshedState ()
+        let state = refreshedState () |> Async.RunSynchronously
         let task = state |> itemWithId task.id
 
-        Workflows.reschedule "23:30" "testLabel" [task] (refreshedState ()) |> ignore
+        Workflows.reschedule "23:30" "testLabel" [task] (refreshedState () |> Async.RunSynchronously) |> ignore
 
         let postponedTask = getTask task.id |> Async.RunSynchronously
         postponedTask.due.Value.is_recurring |> should equal true
@@ -102,9 +102,11 @@ type Tests() =
         Workflows.deleteAllExistingTasks ()
         Workflows.createWithDueString "tom" |> ignore
         Workflows.createWithDueString "in 2 days" |> ignore
+        Workflows.createWithDueString "in 2 days" |> ignore
+        Workflows.createWithDueString "in 3 days" |> ignore
         Workflows.createWithDueString "in 3 days" |> ignore
         let content = (Guid.NewGuid ()).ToString()
-        let state = refreshedState ()
+        let state = refreshedState () |> Async.RunSynchronously
 
         let ui =
             MockInteractions.create ()
