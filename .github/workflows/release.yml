@@ -33,9 +33,9 @@ jobs:
           
       - name: Publish
         run: |
-          dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true
+          dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -o publish/
           echo "Build output directory:"
-          ls -R bin/Release/
+          ls -R publish/
         
       - name: Get Commit Hash
         id: commit
@@ -45,7 +45,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            **/Release/**/${{ matrix.binary_name }}
+            publish/${{ matrix.rid }}/${{ matrix.binary_name }}
           tag_name: commit-${{ steps.commit.outputs.hash }}
           name: Release from commit ${{ steps.commit.outputs.hash }}
           body: |

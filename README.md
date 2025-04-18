@@ -6,7 +6,7 @@ A terminal user interface for Todoist with both interactive and command-line mod
 
 ### Using Pre-built Binary
 
-1. Download the latest release from the [GitHub releases page](https://github.com/yourusername/todoist-tui/releases)
+1. Download the latest release from the [GitHub releases page](https://github.com/DanielmTheDev/todoist-tui/releases)
 2. Move the binary to a directory in your PATH
 3. Set up your Todoist API token:
    ```bash
