@@ -1,6 +1,5 @@
 module Console.Interactive
 
-open System.Threading
 open Console.AddTaskWithLoadBalancing
 open Console.Choice
 open Console.CollectUnderNewParent
@@ -14,7 +13,8 @@ open SpectreCoff
 open TodoistAdapter.LocalState
 
 let rec runInteractively (ui: UserInteraction) =
-    let timer = new Timer((fun _ -> refreshedState () |> ignore), null, 30000, 30000)
+    let timer = State.refreshPeriodically ()
+
 
     let rec loop () =
         let choiceStrings = List.map choiceToString choices
@@ -22,7 +22,9 @@ let rec runInteractively (ui: UserInteraction) =
 
         let choice = choices |> List.find (fun c -> choiceToString c = chosen)
 
-        let execute action = ui |> action (refreshedState ())
+        let execute action =
+            ui
+            |> action (Status.start "Synchronizing" (fun _ -> refreshedState ()) |> Async.RunSynchronously)
         match choice with
         | AddTask -> execute addTask
         | AddTaskWithLoadBalancing -> execute addTaskWithLoadBalancing
@@ -30,12 +32,11 @@ let rec runInteractively (ui: UserInteraction) =
         | ScheduleToday -> execute scheduleToday
         | CollectUnderNewParent -> execute collectUnderNewParent
         | PostponeToday -> execute postponeToday
-        | ResetTodayPriority -> resetTodayPriority (refreshedState ())
+        | ResetTodayPriority -> execute resetTodayPriority
         |> Async.RunSynchronously
         |> ignore
         refreshedState () |> ignore
         loop ()
-
     try
         loop ()
     finally

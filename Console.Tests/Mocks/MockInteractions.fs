@@ -81,4 +81,8 @@ module MockInteractions =
                 else
                     failwith "No more 'chooseGroupedFrom' responses available."
 
-          print = fun _ -> () }
+          print = fun _ -> ()
+
+          spinner = fun _ asyncOp -> asyncOp
+
+          spinnerMany = fun _ asyncOp -> asyncOp }

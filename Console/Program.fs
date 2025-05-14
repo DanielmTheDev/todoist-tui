@@ -6,10 +6,10 @@ open Argu
 
 let parser = ArgumentParser.Create<Arguments>(programName = "todoist-tui")
 
-initialize ()
-
 let results = parser.ParseCommandLine ()
 if results.GetAllResults().Length <> 0 then
-    runWithCommandArgs spectreCoffUi results
+    initializeCommunication ()
+    runWithCommandArgs spectreCoffUi results |> Async.RunSynchronously |> ignore
 else
-    runInteractively spectreCoffUi
+    SpectreCoff.Status.start "Synchronizing" (fun _ -> initializeAll ()) |> Async.RunSynchronously
+    runInteractively spectreCoffUi |> Async.RunSynchronously |> ignore

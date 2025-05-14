@@ -44,5 +44,6 @@ let postponeToday state ui =
                 |> groupTaskNumberByDate
                 |> distributeTasks chosenTasks
                 |> updateTask
+                |> ui.spinner "Postponing tasks"
             return [ updateResults ]
     }

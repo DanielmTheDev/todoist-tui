@@ -8,7 +8,7 @@ open TodoistAdapter.Initialization
 open TodoistAdapter.SyncApi
 open TodoistAdapter.Types.TodoistTask
 
-do initialize ()
+do initializeAll () |> Async.RunSynchronously
 
 let create dueString =
         { defaultCreateTask with content = "test task"; due_string = Some dueString; priority = Some 4 }

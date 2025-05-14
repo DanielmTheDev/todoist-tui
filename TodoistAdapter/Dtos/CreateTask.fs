@@ -1,5 +1,7 @@
 module TodoistAdapter.Dtos.CreateTaskDto
 
+open TodoistAdapter.Types.DueString
+
 type CreateTask = {
     content: string
     description: string option
@@ -9,7 +11,7 @@ type CreateTask = {
     order: int option
     labels: string array option
     priority: int option
-    due_string: string option
+    due_string: DueString option
     due_date: string option
     due_datetime: string option
     due_lang: string option

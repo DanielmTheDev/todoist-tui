@@ -5,7 +5,7 @@ open FsHttp
 open TodoistAdapter.Initialization
 open TodoistAdapter.SyncApi
 
-do initialize ()
+do initializeAll () |> Async.RunSynchronously
 
 let deleteAllExisting () =
     async {

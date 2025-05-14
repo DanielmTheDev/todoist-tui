@@ -16,6 +16,7 @@ let addTask (state: State) (ui: UserInteraction) =
         let! response =
             { defaultCreateTask with content = content; due_string = Some due; labels = Some [|label|] }
             |> createTask
+            |> ui.spinner "Adding"
         return [response]
     }
 

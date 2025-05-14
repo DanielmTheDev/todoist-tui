@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <None Include="Experiments.fsx" />
+        <Compile Include="Async.fs" />
         <Compile Include="UserInteraction.fs" />
         <Compile Include="LoadBalancing.fs" />
         <Compile Include="TaskQueries\Add.fs" />
@@ -27,7 +28,7 @@
 
     <ItemGroup>
       <PackageReference Include="Argu" Version="6.2.5" />
-      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.49.12" />
+      <PackageReference Include="EluciusFTW.SpectreCoff" Version="0.50.6" />
       <PackageReference Include="FsHttp" Version="15.0.1" />
     </ItemGroup>
 

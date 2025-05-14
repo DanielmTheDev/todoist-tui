@@ -10,21 +10,21 @@ open Xunit
 
 type LocalStateTests() =
 
-    do initialize ()
+    do initializeAll () |> Async.RunSynchronously
 
     [<Fact>]
     member _.``Merges tasks in local state`` () =
         let t1 = TestTasks.createToday ()
         let t2 = TestTasks.createToday ()
 
-        let beforeMerge = refreshedState ()
+        let beforeMerge = refreshedState () |> Async.RunSynchronously
 
         beforeMerge.items |> List.map _.id |> should contain t1.id
         beforeMerge.items |> List.map _.id |> should contain t2.id
 
         let t3 = TestTasks.createToday ()
 
-        let afterMerge = refreshedState ()
+        let afterMerge = refreshedState () |> Async.RunSynchronously
 
         afterMerge.items |> List.map _.id |> should contain t1.id
         afterMerge.items |> List.map _.id |> should contain t2.id
@@ -35,14 +35,14 @@ type LocalStateTests() =
         let t1 = TestTasks.createToday ()
         let t2 = TestTasks.createToday ()
 
-        let beforeCompletion = refreshedState ()
+        let beforeCompletion = refreshedState () |> Async.RunSynchronously
 
         beforeCompletion.items |> List.map _.id |> should contain t1.id
         beforeCompletion.items |> List.map _.id |> should contain t2.id
 
         completeTask t2.id |> Async.RunSynchronously |> Response.assert2xx |> ignore
 
-        let afterCompletion = refreshedState ()
+        let afterCompletion = refreshedState () |> Async.RunSynchronously
 
         afterCompletion.items |> List.map _.id |> should contain t1.id
         let completed = afterCompletion.items |> List.find (fun item -> item.id = t2.id)
