@@ -51,6 +51,7 @@ Run `todoist-tui` without arguments to enter interactive mode, which provides:
 
 - Add Task: Create a new task with content, due date and optional label
 - Add Task with Load Balancing: Automatically add tasks up to selected number of days ahead, chosen dependent on least load
+- Complete and add reminder: Completes a task, but prompts to add a reminder for today. Especially nice for recurring tasks
 - Complete Tasks: Bulk mark today's tasks as complete
 - Schedule Today: Schedule tasks for today with specific times
 - Collect Under New Parent: Group tasks under a new parent task
