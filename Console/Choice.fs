@@ -3,6 +3,7 @@ module Console.Choice
 type TaskChoice =
     | AddTask
     | AddTaskWithLoadBalancing
+    | CompleteButAddReminder
     | CompleteTasks
     | ScheduleToday
     | CollectUnderNewParent
@@ -18,10 +19,12 @@ let choiceToString =
     | CollectUnderNewParent -> "Collect under new parent task"
     | PostponeToday -> "Postpone Today"
     | ResetTodayPriority -> "Reset Today's priority"
+    | CompleteButAddReminder -> "Complete Task, but add reminder for today"
 
 let choices =
     [ AddTask
       AddTaskWithLoadBalancing
+      CompleteButAddReminder
       CompleteTasks
       ScheduleToday
       CollectUnderNewParent

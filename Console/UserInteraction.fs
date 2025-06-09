@@ -12,9 +12,9 @@ type UserInteraction =
       chooseGroupedFromWith: GroupedSelectionPromptOptions -> ChoiceGroups<Task> -> string -> Task list
       chooseGroupedFrom: ChoiceGroups<Task> -> string -> Task list
       print: string -> unit
-      // todo: maybe I need specific methods for the other types (state etc). in the end, I should not use the underlying library anymore anywhere
       spinner: string -> Async<Response> -> Async<Response>
-      spinnerMany: string -> Async<Response list> -> Async<Response list> }
+      spinnerList: string -> Async<Response list> -> Async<Response list>
+      spinnerArray: string -> Async<Response array> -> Async<Response array> }
 
 let spectreCoffUi =
     { ask = ask
@@ -26,8 +26,11 @@ let spectreCoffUi =
       spinner = fun text fn ->
           let operation (_: StatusContext) = fn
           (SpectreCoff.Status.start text operation)
-      spinnerMany = fun text fn ->
+      spinnerList = fun text fn ->
           let operation _: Async<Response list> = fn
+          SpectreCoff.Status.start text operation
+      spinnerArray = fun text fn ->
+          let operation _: Async<Response array> = fn
           SpectreCoff.Status.start text operation }
 
 let defaultUserInteraction =
@@ -38,4 +41,5 @@ let defaultUserInteraction =
       chooseGroupedFrom = fun _ _ -> failwith "Not implemented"
       print = fun _ -> failwith "Not implemented"
       spinner = fun _ _ -> failwith "Not implemented"
-      spinnerMany = fun _ _ -> failwith "Not implemented" }
+      spinnerList = fun _ _ -> failwith "Not implemented"
+      spinnerArray = fun _ _ -> failwith "Not implemented" }

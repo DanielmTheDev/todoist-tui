@@ -4,6 +4,7 @@ open System
 open Console.AddTaskWithLoadBalancing
 open Console.CollectUnderNewParent
 open Console.Tests
+open Console.Workflows.CompleteButRemindLater
 open FsHttp
 open TodoistAdapter.CommunicationRestApi
 open TodoistAdapter.Initialization
@@ -122,3 +123,27 @@ type Tests() =
 
         let expectedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1))
         (dateOnlyOf newTask.due.Value.date.Value) |> should equal expectedDate
+
+    [<Fact>]
+    member _.``CompleteButRemindLater completes the task and creates a reminder for today``() =
+        let content = (Guid.NewGuid ()).ToString()
+        let originalTask = Workflows.createFull content "every 2 day" "testLabel"
+        let ui =
+            MockInteractions.create ()
+            |> MockInteractions.addChooseGroupedFrom [originalTask]
+            |> MockInteractions.addChooseFrom "testLabel"
+            |> MockInteractions.addChooseFrom "23:00"
+            |> MockInteractions.build
+        let state = refreshedState () |> Async.RunSynchronously
+
+        completeButRemindLater state ui |> Async.RunSynchronously |> ignore
+
+        let itemPair =
+            (fullSync ()
+             |> Async.RunSynchronously).items
+             |> List.filter (fun item -> item.content = content)
+
+        let movedOriginalTask = itemPair |> List.find (fun item -> item.id = originalTask.id)
+        movedOriginalTask.due.Value.date.Value |> should equal (fromDateTime (DateTime.Today.AddDays 2))
+        let newlyCreatedReminder = itemPair |> List.find (fun item -> item.id <> originalTask.id)
+        newlyCreatedReminder.due.Value.date.Value |> should equal (TodoistDateTime (DateTime.Today.AddHours(23)))

@@ -9,4 +9,4 @@ let completeTasks (state: State) ui =
     |> List.map (fun t -> completeTask t.id)
     |> Async.Parallel
     |> Async.map List.ofArray
-    |> ui.spinnerMany "Completing"
+    |> ui.spinnerList "Completing"

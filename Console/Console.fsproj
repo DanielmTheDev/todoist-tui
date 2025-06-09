@@ -18,6 +18,7 @@
         <Compile Include="Workflows\ResetPriorities.fs" />
         <Compile Include="Workflows\ScheduleToday.fs" />
         <Compile Include="Workflows\AddTaskWithLoadBalancing.fs" />
+        <Compile Include="Workflows\CompleteButRemindLater.fs" />
         <Compile Include="Workflows\PostponeToday.fs" />
         <Compile Include="LocalState.fs" />
         <Compile Include="Choice.fs" />

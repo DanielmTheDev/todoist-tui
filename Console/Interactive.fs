@@ -9,6 +9,7 @@ open Console.ResetPriorities
 open Console.ScheduleToday
 open Console.TaskQueries.Add
 open Console.UserInteraction
+open Console.Workflows.CompleteButRemindLater
 open SpectreCoff
 open TodoistAdapter.LocalState
 
@@ -28,6 +29,7 @@ let rec runInteractively (ui: UserInteraction) =
         match choice with
         | AddTask -> execute addTask
         | AddTaskWithLoadBalancing -> execute addTaskWithLoadBalancing
+        | CompleteButAddReminder -> execute completeButRemindLater
         | CompleteTasks -> execute completeTasks
         | ScheduleToday -> execute scheduleToday
         | CollectUnderNewParent -> execute collectUnderNewParent

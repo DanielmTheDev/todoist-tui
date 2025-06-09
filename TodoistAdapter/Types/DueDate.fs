@@ -53,3 +53,5 @@ let dateOnlyOf date =
     match date with
     | TodoistDateOnly date -> date
     | TodoistDateTime dateTime -> DateOnly.FromDateTime dateTime
+
+let fromDateTime dateTime = TodoistDateOnly (DateOnly.FromDateTime dateTime)

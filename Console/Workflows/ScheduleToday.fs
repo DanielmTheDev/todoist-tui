@@ -9,9 +9,9 @@ open TodoistAdapter.Types.DueDate
 open TodoistAdapter.Types.State
 open TodoistAdapter.Types.TodoistTask
 
-let private scheduleTimes =
-    List.init 24 (fun i -> DateTime.Now.Hour + 1 + i * 2)
-    |> List.filter (fun i -> i < 24)
+let scheduleTimes =
+    List.init (24 - DateTime.Now.Hour) (fun i -> DateTime.Now.Hour + i + 1)
+    |> List.filter (fun i -> i <= 23)
     |> List.map (fun i -> $"{i}:00")
 
 let private createTaskWithNewTime (ui: UserInteraction) (task: Task) =

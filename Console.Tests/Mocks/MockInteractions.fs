@@ -85,4 +85,5 @@ module MockInteractions =
 
           spinner = fun _ asyncOp -> asyncOp
 
-          spinnerMany = fun _ asyncOp -> asyncOp }
+          spinnerList = fun _ asyncOp -> asyncOp
+          spinnerArray = fun _ asyncOp -> asyncOp }
